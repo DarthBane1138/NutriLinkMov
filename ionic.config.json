@@ -1,0 +1,7 @@
+{
+  "name": "NutriLinkMov",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
