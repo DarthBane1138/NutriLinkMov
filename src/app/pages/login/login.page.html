@@ -1,0 +1,30 @@
+<ion-content fullscreen class="login-container">
+
+  <div class="upper-panel">
+    <h2 class="hola">¡Hola!</h2>
+    <h2 class="bienvenido">Bienvenido a</h2>
+    <img src="assets/img/NutrilinkLOGO.png" alt="logo">
+  </div>
+    <!--Panel de inicio sesión -->
+    <div class="lower-panel">
+      <!--Letras iniciar sesión -->
+      <h3 class="iniciar-sesion">Iniciar Sesión</h3>
+      <!--Input mail-->
+      <ion-item class="input-item">
+        <ion-icon name="mail" slot="start"></ion-icon>
+        <ion-input placeholder="Ingresar correo" type="email"></ion-input>
+      </ion-item>
+      <!--Input contraseña-->
+      <ion-item class="input-item">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-input placeholder="Ingresar contraseña" type="password"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="remember-item">
+        <ion-checkbox slot="start" color="primary"></ion-checkbox>
+        <ion-label>Mantener la sesión</ion-label>
+      </ion-item>
+      <ion-button expand="block" class="login-button" (click)="irHome()">INICIAR SESIÓN</ion-button>
+    </div>
+    
+</ion-content>

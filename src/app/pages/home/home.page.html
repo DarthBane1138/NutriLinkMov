@@ -1,0 +1,37 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Home</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+<div class="panel-uno">
+  <h1>Hola,</h1>
+  <h2>username!</h2>
+</div>
+<div class="panel-dos">
+  <p>Seleccione una actividad<p>
+    <div class="cuadrados">
+      <div class="cuadro azul" (click)="irDatosAntropometricos()">Ver datos antropométricos</div>
+      <div class="cuadro verde" (click)="irPlanNutricional()">Plan nutricional</div>
+      <div class="cuadro amarillo" (click)="irAgendarCita()">Agendar cita</div>
+    </div>
+</div>
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Mi nutricionista</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+      <ion-item lines="none">
+        <ion-thumbnail slot="start">
+          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+        </ion-thumbnail>
+        <ion-label>Item</ion-label>
+      </ion-item>
+  </ion-card-content>
+</ion-card>
+<div (click)="irNutricionistas()">
+  <p class="link-nutris">Ver más nutricionistas</p>
+</div>
+</ion-content>
+<app-nav-bar></app-nav-bar>
