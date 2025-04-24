@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
+import { DblocalService } from 'src/app/services/dblocal.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginPage implements OnInit {
   mdl_correo: string = '';
   mdl_contrasena: string = '';
 
-  constructor(private router:Router, private api: ApiService) { }
+  constructor(private router:Router, private api: ApiService, private db: DblocalService) { }
 
   ngOnInit() {
     console.log("PLF: Login")
@@ -34,6 +35,7 @@ export class LoginPage implements OnInit {
       let json = JSON.parse(json_texto);
       if (json.status == "ok") {
         this.router.navigate(['home'], { replaceUrl: true })
+        await this.db.almacenarSesion(this.mdl_correo, this.mdl_contrasena)
       } else {
         console.log("PLF consumo API: Error al iniciar sesión: " + json.message)
       }

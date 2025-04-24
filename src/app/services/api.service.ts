@@ -17,4 +17,8 @@ export class ApiService {
 
     return this.http.post(this.ruta + "/api_nutrilink/paciente/login", objeto).pipe()
   }
+
+  obtencionNutricionistas() {
+    return this.http.get(this.ruta + "/api_nutrilink/nutricionista/obtener_todos").pipe()
+  }
 }
