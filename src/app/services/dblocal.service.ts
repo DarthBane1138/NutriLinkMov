@@ -55,4 +55,22 @@ export class DblocalService {
     })
     .catch(e => console.log('PLF: ERROR AL CREAR O ABRIR BASE DE DATOS' + JSON.stringify(e)));
   }
+
+  obtenerSesion() {
+    return this.sqlite.create({
+      name: 'data.db',
+      location: 'default'
+    })
+    .then((db: SQLiteObject) => {
+      return db.executeSql('SELECT correo, contrasena from sesion', [])
+        .then((data) => {
+          let objeto: any = {};
+          objeto.correo = data.rows.item(0).correo;
+          objeto.contrasena = data.rows.item(0).contrasena;
+          return objeto;
+        })
+        .catch(e => console.log('PLF: ERROR AL OBTENER SESIÓN: ' + JSON.stringify(e)));
+    })
+    .catch(e => console.log('PLF: ERROR AL CREAR O ABRIR BASE DE DATOS' + JSON.stringify(e)));
+  }
 }

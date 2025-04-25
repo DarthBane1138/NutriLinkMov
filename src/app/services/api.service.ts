@@ -21,4 +21,13 @@ export class ApiService {
   obtencionNutricionistas() {
     return this.http.get(this.ruta + "/api_nutrilink/nutricionista/obtener_todos").pipe()
   }
+
+  obtenerPaciente(correo: string, contrasena: string) {
+    let objeto: any = {};
+    objeto.correo = correo;
+    objeto.contrasena = contrasena;
+
+    return this.http.get(this.ruta + "/api_nutrilink/paciente/obtener_paciente_citas", objeto).pipe()
+  }
+
 }

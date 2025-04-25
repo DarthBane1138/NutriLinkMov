@@ -10,7 +10,8 @@
   <ion-item *ngFor="let nutricionista of listaNutricionistas">
     <ion-card>
       <ion-card-header>
-        <ion-card-title>{{ nutricionista.nombre }}</ion-card-title>
+        <ion-card-title>{{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</ion-card-title>
+        <ion-card-title>{{ nutricionista.correo }}</ion-card-title>
       </ion-card-header>
     </ion-card>
   </ion-item>

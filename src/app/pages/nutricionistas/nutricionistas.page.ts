@@ -26,7 +26,9 @@ export class NutricionistasPage implements OnInit {
     let json = JSON.parse(json_texto);
     for(let x = 0; x < json.length; x++) {
       let nutricionista: any = {}
-      nutricionista.nombre = json[x].primer_nombre;
+      nutricionista.primer_nombre = json[x].primer_nombre;
+      nutricionista.apellido_p = json[x].apellido_paterno;
+      nutricionista.correo = json[x].correo;
       this.listaNutricionistas.push(nutricionista);
     }
   }
