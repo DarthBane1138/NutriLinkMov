@@ -16,7 +16,8 @@ export class HomePage {
   contrasena: string = '';
   id_paciente: number = 0;
 
-  datosUsuarios: any = {}; // <<< CAMBIO aquí. Ya no array, sino objeto.
+  datosUsuarios: any = {};
+  datosNutris: any[] = [];
 
   confirmButtons = [
     {
@@ -96,6 +97,7 @@ export class HomePage {
     } catch (error) {
       console.error('PLF Error al obtener la información del usuario:', error);
     }
+    await this.infoNutris();
   }
 
   obtenerEmojiGenero(): string {
@@ -105,6 +107,28 @@ export class HomePage {
       return '👩‍💻'; // Mujer
     } else {
       return '👤'; // Otro / No definido
+    }
+  }
+
+  async infoNutris() {
+    this.datosNutris = [];
+  
+    try {
+      const datos = this.api.obtenerNutrisId(this.datosUsuarios.id_paciente);
+      const respuesta: any[] = await lastValueFrom(datos);
+  
+      for (const nutri of respuesta) {
+        const nutricionista: any = {
+          primer_nombre: nutri.primer_nombre,
+          apellido_p: nutri.apellido_materno,
+          correo: nutri.correo
+        };
+  
+        console.log("PLF: Nutri", nutricionista.primer_nombre);
+        this.datosNutris.push(nutricionista);
+      }
+    } catch (error) {
+      console.error('PLF Error al obtener nutricionistas:', error);
     }
   }
 

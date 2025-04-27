@@ -23,10 +23,13 @@ export class ApiService {
   }
 
   obtenerPaciente(id_paciente: number) {
-    console.log("PLF: Me caí: " + id_paciente);
     return this.http.get(this.ruta + `/api_nutrilink/paciente/obtener_paciente_citas/${id_paciente}`, {
       responseType: 'json' as 'json'
     }).pipe();
+  }
+
+  obtenerNutrisId(id_paciente: number) {
+return this.http.get<any[]>(this.ruta + `/api_nutrilink/paciente/obtener_vinculo_paciente_nutri/${id_paciente}`);
   }
 
 }

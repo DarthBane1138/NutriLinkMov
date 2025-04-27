@@ -23,17 +23,18 @@
 </div>
 <ion-card>
   <ion-card-header>
-    <ion-card-title>Mi nutricionista</ion-card-title>
+    <ion-card-title>Mis nutricionistas</ion-card-title>
   </ion-card-header>
-  <ion-card-content>
-      <ion-item lines="none">
-        <ion-thumbnail slot="start">
-          <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-        </ion-thumbnail>
-        <!--
-        <ion-card-title>{{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</ion-card-title>
-        <ion-card-title>{{ nutricionista.correo }}</ion-card-title>-->
-      </ion-item>
+  <ion-card-content *ngFor="let nutricionista of datosNutris">
+    <ion-item lines="none">
+      <ion-thumbnail slot="start">
+        <img alt="Foto del nutricionista" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+      </ion-thumbnail>
+      <ion-label class="ion-text-wrap">
+        <h2 class="ion-text-capitalize">{{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</h2>
+        <p>{{ nutricionista.correo }}</p>
+      </ion-label>
+    </ion-item>
   </ion-card-content>
 </ion-card>
 <div (click)="irNutricionistas()">

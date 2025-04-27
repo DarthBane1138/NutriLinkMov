@@ -17,6 +17,12 @@ export class LoginPage implements OnInit {
   mdl_correo: string = '';
   mdl_contrasena: string = '';
   ocultarTextos: boolean = false;
+  v_visible = false;
+  v_mensaje = '';
+  isToastOpen = false;
+  spinnervisible: boolean = false;
+  duration: number = 3000;
+
 
   constructor(private router:Router, private api: ApiService, private db: DblocalService, private renderer: Renderer2) { }
 
@@ -46,27 +52,42 @@ export class LoginPage implements OnInit {
 
   async login() {
     try {
-      let datos = this.api.loginUsuario(
-        this.mdl_correo, this.mdl_contrasena
-      );
+      this.v_visible = false;
+      let datos = this.api.loginUsuario(this.mdl_correo, this.mdl_contrasena);
       let respuesta = await lastValueFrom(datos);
       let json_texto = JSON.stringify(respuesta);
       let json = JSON.parse(json_texto);
-      if (JSON.parse(json_texto).status == "ok") {
+      if (json.status === "ok") {
+        this.spinnervisible = true;
+        this.v_mensaje = "Iniciando Sesión, espere un momento";
+        this.isToastOpen = true;
         console.log("PLF valores almacenados:", this.mdl_correo, this.mdl_contrasena, json.id_paciente);
         await this.db.almacenarSesion(
           this.mdl_correo,
           this.mdl_contrasena,
           json.id_paciente
         );
-        this.router.navigate(['home'], { replaceUrl: true });
+        setTimeout(() => {
+          this.spinnervisible = false;
+          this.isToastOpen = false;
+          this.router.navigate(['home'], { replaceUrl: true });
+        }, 3000);
+      }
+    } catch (error: any) {  // <-- Capturamos error
+      console.error("PLF: Error al consumir API", error);
+      // Aquí manejamos el error que envió tu API
+      this.v_visible = true;
+      if (error?.error?.mensaje) {
+        this.v_mensaje = error.error.mensaje;  // Mensaje que enviaste desde el backend
       } else {
-        console.log("PLF consumo API: Error al iniciar sesión: " + JSON.parse(json_texto).message);
+        this.v_mensaje = "Error inesperado. Intente nuevamente.";
       }
     }
-    catch (error) {
-      console.error("PLF: Error al consumir API", error)
-    }
+  }
+
+  // Función para abrir Toast
+  setOpen(isOpen: boolean) {
+    this.isToastOpen = isOpen
   }
 
 }

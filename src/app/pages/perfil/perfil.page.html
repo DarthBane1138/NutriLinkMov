@@ -6,10 +6,60 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">perfil</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-avatar class="contenedorPerfil">
+    <img alt="Silhouette of a person's head" src="../../../assets/img/Login_Icon_2a1a3edd-38c4-465a-bcee-a2ab946a7d47.webp" />
+  </ion-avatar>
+<ion-card class="datosPerfil">
+  <ion-card-header>
+    <ion-card-title> Datos de Usuario</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list class="datosPerfil">
+      <!-- Primer Nombre -->
+       <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="person-circle-sharp"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>{{ datosUsuarios.primer_nombre }} {{ datosUsuarios.segundo_nombre }} {{ datosUsuarios.apellido_paterno }} {{ datosUsuarios.apellido_materno }}</ion-label>
+       </ion-item>
+      <!-- Rut más dígito verificador -->
+       <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="document-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> RUT: {{ datosUsuarios.rut_paciente }}-{{ datosUsuarios.dv }} </ion-label>
+       </ion-item>
+      <!-- Sexo -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="male-female-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> Sexo: {{ datosUsuarios.sexo === 'M' ? 'Masculino' : 'Femenino' }} </ion-label>
+       </ion-item>
+      <!-- Fecha de Nacimiento -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="calendar-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> Edad: {{ edadPaciente }} años </ion-label>
+       </ion-item>
+      <!-- Teléfono -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="call-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> {{ datosUsuarios.telefono }} </ion-label>
+       </ion-item>
+      <!-- Correo -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="mail-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> {{ datosUsuarios.correo }} </ion-label>
+       </ion-item>
+
+    </ion-list>
+  </ion-card-content>
+</ion-card>
 </ion-content>
 <app-nav-bar></app-nav-bar>

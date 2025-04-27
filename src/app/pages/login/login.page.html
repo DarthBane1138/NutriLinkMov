@@ -1,5 +1,4 @@
 <ion-content fullscreen class="login-container" scroll-y="false">
-
   <div class="upper-panel">
     <div class="textos-superiores" [ngClass]="{ 'oculto': ocultarTextos }">
       <h2 class="hola">¡Hola!</h2>
@@ -28,7 +27,21 @@
         <ion-checkbox slot="start"></ion-checkbox>
         <ion-label>Mantener la sesión</ion-label>
       </ion-item>
-      <ion-button expand="block" class="login-button" (click)="login()">INICIAR SESIÓN</ion-button>
+      <ion-button expand="block" class="login-button" (click)="login()">
+        <ion-spinner *ngIf="spinnervisible" name="circular" slot="start"></ion-spinner>
+        <!-- Spinner -->
+        <span *ngIf="!spinnervisible">INICIAR SESIÓN</span>
+      </ion-button>
+      <!-- Mensaje -->
+       <ion-item *ngIf="v_visible" color="danger" class="ion-margin-top ion-text-center">
+        <ion-label>{{ v_mensaje }}</ion-label>
+      </ion-item>
     </div>
-    
+    <ion-toast
+    [isOpen]="isToastOpen"
+    [message]="v_mensaje"
+    [duration]="duration"
+    (didDismiss)="setOpen(false)"
+    position="bottom"
+    ></ion-toast>
 </ion-content>
