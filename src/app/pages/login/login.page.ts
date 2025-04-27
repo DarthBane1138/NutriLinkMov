@@ -32,12 +32,18 @@ export class LoginPage implements OnInit {
       );
       let respuesta = await lastValueFrom(datos);
       let json_texto = JSON.stringify(respuesta);
-      let json = JSON.parse(json_texto);
-      if (json.status == "ok") {
-        this.router.navigate(['home'], { replaceUrl: true })
-        await this.db.almacenarSesion(this.mdl_correo, this.mdl_contrasena)
+      
+      if (JSON.parse(json_texto).status == "ok") {
+        let json = JSON.parse(json_texto);
+        console.log("PLF valores almacenados:", this.mdl_correo, this.mdl_contrasena, json.id_paciente);
+        await this.db.almacenarSesion(
+          this.mdl_correo,
+          this.mdl_contrasena,
+          json.id_paciente
+        );
+        this.router.navigate(['home'], { replaceUrl: true });
       } else {
-        console.log("PLF consumo API: Error al iniciar sesión: " + json.message)
+        console.log("PLF consumo API: Error al iniciar sesión: " + JSON.parse(json_texto).message);
       }
     }
     catch (error) {

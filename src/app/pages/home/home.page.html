@@ -1,14 +1,17 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Home</ion-title>
-    
+<ion-header class="ion-padding-top">
+  <ion-toolbar class="toolbar">
+    <ion-title class="titulo-head">Home</ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="present-alert" expand="block" color="danger">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 <div class="panel-uno">
-  <h1>Hola,</h1>
-  <h2>username!</h2>
+  <h1>Hola {{ datosUsuarios.primer_nombre }} {{ obtenerEmojiGenero() }} !!</h1>
 </div>
 <div class="panel-dos">
   <p>Seleccione una actividad<p>
@@ -37,4 +40,12 @@
   <p class="link-nutris">Ver más nutricionistas</p>
 </div>
 </ion-content>
+<!-- Alertas -->
+<!-- Alerta para cierre de sesión -->
+ <ion-alert
+ trigger="present-alert"
+ header="¿Está seguro que desea cerrar sesión?"
+ [buttons]="confirmButtons"
+ cssClass="cerrar-sesion-alerta"
+ ></ion-alert>
 <app-nav-bar></app-nav-bar>
