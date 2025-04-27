@@ -14,8 +14,9 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      StatusBar.setBackgroundColor({ color: '#173B4C' });
-      StatusBar.setStyle({ style: Style.Dark });
+      StatusBar.setStyle({ style: Style.Dark }); // General
+      StatusBar.setBackgroundColor({ color: 'transparent' }); // Fondo normal
+      StatusBar.setOverlaysWebView({ overlay: false });  // Que no invada la StatusBar
     });
   }
 }
