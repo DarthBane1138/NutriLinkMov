@@ -1,9 +1,13 @@
-<ion-content fullscreen class="login-container" scroll-y="true">
+<ion-content fullscreen class="login-container" scroll-y="false">
 
   <div class="upper-panel">
-    <h2 class="hola">¡Hola!</h2>
-    <h2 class="bienvenido">Bienvenido a</h2>
-    <img src="assets/img/NutrilinkLOGO.png" alt="logo">
+    <div class="textos-superiores" [ngClass]="{ 'oculto': ocultarTextos }">
+      <h2 class="hola">¡Hola!</h2>
+      <h2 class="bienvenido">Bienvenido a</h2>
+    </div>
+    <div>
+      <img src="assets/img/NutrilinkLOGO.png" alt="logo" class="logo-nutrilink" [ngClass]="{ 'subir-logo': ocultarTextos }">
+    </div>
   </div>
     <!--Panel de inicio sesión -->
     <div class="lower-panel">

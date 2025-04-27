@@ -16,23 +16,27 @@ export class LoginPage implements OnInit {
 
   mdl_correo: string = '';
   mdl_contrasena: string = '';
+  ocultarTextos: boolean = false;
 
   constructor(private router:Router, private api: ApiService, private db: DblocalService, private renderer: Renderer2) { }
 
   ngOnInit() {
-    console.log("PLF: Login")
+    console.log("PLF: Login");
     Keyboard.addListener('keyboardWillShow', () => {
-      const lowerPanel = document.querySelector('.lower-panel');
+      const lowerPanel = document.querySelector('.lower-panel') as HTMLElement;
       if (lowerPanel) {
         this.renderer.addClass(lowerPanel, 'move-up');
+        this.renderer.setStyle(lowerPanel, 'height', '80%');
       }
+      this.ocultarTextos = true; // Se ocultan textos para dejar sólo logo NutriLink
     });
-
     Keyboard.addListener('keyboardWillHide', () => {
-      const lowerPanel = document.querySelector('.lower-panel');
+      const lowerPanel = document.querySelector('.lower-panel') as HTMLElement;
       if (lowerPanel) {
         this.renderer.removeClass(lowerPanel, 'move-up');
+        this.renderer.setStyle(lowerPanel, 'height', '50%'); // Vuelve al tamaño normal
       }
+      this.ocultarTextos = false; // Se vualven a mostrar textos superiores
     });
   }
 
@@ -47,9 +51,8 @@ export class LoginPage implements OnInit {
       );
       let respuesta = await lastValueFrom(datos);
       let json_texto = JSON.stringify(respuesta);
-      
+      let json = JSON.parse(json_texto);
       if (JSON.parse(json_texto).status == "ok") {
-        let json = JSON.parse(json_texto);
         console.log("PLF valores almacenados:", this.mdl_correo, this.mdl_contrasena, json.id_paciente);
         await this.db.almacenarSesion(
           this.mdl_correo,

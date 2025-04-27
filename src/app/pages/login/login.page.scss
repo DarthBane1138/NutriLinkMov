@@ -1,7 +1,8 @@
-
-.login-container {
-    --background: linear-gradient(to top, #173B4C, #3F5C69);
-  }
+ion-content {
+  --background: linear-gradient(to top, #173B4C, #3F5C69);
+  display: flex;
+  flex-direction: column;
+}
   
   .upper-panel {
     background: transparent;
@@ -72,6 +73,18 @@
     margin-bottom: 1rem;
   }
 
+  .textos-superiores {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.3s ease;
+  }
+  
+  .textos-superiores.oculto {
+    opacity: 0;
+    pointer-events: none; /* para que no moleste si oculto visualmente */
+  }
+
   .iniciar-sesion {
     color: black;
     font-size: 1.5rem;
@@ -85,6 +98,14 @@
   }
 
   .move-up {
-    transform: translateY(-57%);
+    transform: translateY(-30%);
     transition: transform 0.3s ease;
+  }
+
+  .logo-nutrilink {
+    transition: transform 0.4s ease;
+  }
+  
+  .subir-logo {
+    transform: translateY(-130px); /* Ajustable, puedes poner -20px, -40px según cómo se vea */
   }
