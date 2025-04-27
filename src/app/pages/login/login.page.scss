@@ -5,7 +5,7 @@
   
   .upper-panel {
     background: transparent;
-    position: absolute;
+    //position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -24,9 +24,9 @@
   }
   
   .lower-panel {
-    position: absolute;
+    //position: absolute;
     bottom: 0;
-    background-color: #f4f4f4;
+    background-color: #EBEBEB;
     flex: 1;
     padding: 2rem;
     height: 50%;
@@ -37,15 +37,18 @@
   
   .input-item {
     margin-bottom: 1rem;
+    background: white;
+    border: 0.8px solid black;
     border-radius: 20px;
-    --background: white;
     --inner-border-width: 0;
+    --background: white;
     color: grey;
+    overflow: hidden; /* <- importante para que el contenido respete el borde redondeado */
   }
   
   .remember-item {
     margin-bottom: 1rem;
-    background-color: white;
+    --background: transparent;
   }
   
   .login-button {
@@ -79,4 +82,9 @@
   ion-icon {
     color: black;
     font-size: 2rem;
+  }
+
+  .move-up {
+    transform: translateY(-57%);
+    transition: transform 0.3s ease;
   }

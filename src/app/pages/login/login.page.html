@@ -1,4 +1,4 @@
-<ion-content fullscreen class="login-container">
+<ion-content fullscreen class="login-container" scroll-y="true">
 
   <div class="upper-panel">
     <h2 class="hola">¡Hola!</h2>
@@ -11,7 +11,7 @@
       <h3 class="iniciar-sesion">Iniciar Sesión</h3>
       <!--Input correo-->
       <ion-item class="input-item">
-        <ion-icon name="mail" slot="start"></ion-icon>
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
         <ion-input [(ngModel)]="mdl_correo" placeholder="Ingresar correo" type="email"></ion-input>
       </ion-item>
       <!--Input contraseña-->
@@ -21,7 +21,7 @@
       </ion-item>
 
       <ion-item lines="none" class="remember-item">
-        <ion-checkbox slot="start" color="primary"></ion-checkbox>
+        <ion-checkbox slot="start"></ion-checkbox>
         <ion-label>Mantener la sesión</ion-label>
       </ion-item>
       <ion-button expand="block" class="login-button" (click)="login()">INICIAR SESIÓN</ion-button>

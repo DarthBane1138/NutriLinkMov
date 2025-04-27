@@ -1,0 +1,28 @@
+.splash-background {
+    --background: linear-gradient(to top, #173B4C, #3F5C69);
+  }
+  
+  .splash-container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .splash-logo {
+    width: 400px;
+    height: auto;
+    animation: zoomIn 2s ease-out forwards;
+    opacity: 0;
+  }
+  
+  @keyframes zoomIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
