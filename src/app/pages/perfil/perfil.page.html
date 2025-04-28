@@ -15,41 +15,6 @@
   </ion-card-header>
   <ion-card-content>
     <ion-list class="datosPerfil">
-      <!-- Primer Nombre -->
-       <ion-item>
-        <ion-thumbnail>
-          <ion-icon class="icons" name="person-circle-sharp"></ion-icon>
-        </ion-thumbnail>
-        <ion-label>{{ datosUsuarios.primer_nombre }} {{ datosUsuarios.segundo_nombre }} {{ datosUsuarios.apellido_paterno }} {{ datosUsuarios.apellido_materno }}</ion-label>
-       </ion-item>
-      <!-- Rut más dígito verificador -->
-       <ion-item>
-        <ion-thumbnail>
-          <ion-icon class="icons" name="document-outline"></ion-icon>
-        </ion-thumbnail>
-        <ion-label> RUT: {{ datosUsuarios.rut_paciente }}-{{ datosUsuarios.dv }} </ion-label>
-       </ion-item>
-      <!-- Sexo -->
-      <ion-item>
-        <ion-thumbnail>
-          <ion-icon class="icons" name="male-female-outline"></ion-icon>
-        </ion-thumbnail>
-        <ion-label> Sexo: {{ datosUsuarios.sexo === 'M' ? 'Masculino' : 'Femenino' }} </ion-label>
-       </ion-item>
-      <!-- Fecha de Nacimiento -->
-      <ion-item>
-        <ion-thumbnail>
-          <ion-icon class="icons" name="calendar-outline"></ion-icon>
-        </ion-thumbnail>
-        <ion-label> Edad: {{ edadPaciente }} años </ion-label>
-       </ion-item>
-      <!-- Teléfono -->
-      <ion-item>
-        <ion-thumbnail>
-          <ion-icon class="icons" name="call-outline"></ion-icon>
-        </ion-thumbnail>
-        <ion-label> {{ datosUsuarios.telefono }} </ion-label>
-       </ion-item>
       <!-- Correo -->
       <ion-item>
         <ion-thumbnail>
@@ -57,6 +22,161 @@
         </ion-thumbnail>
         <ion-label> {{ datosUsuarios.correo }} </ion-label>
        </ion-item>
+       <!-- Rut más dígito verificador -->
+        <ion-item>
+         <ion-thumbnail>
+           <ion-icon class="icons" name="document-outline"></ion-icon>
+         </ion-thumbnail>
+         <ion-label> RUT: {{ datosUsuarios.rut_paciente }}-{{ datosUsuarios.dv }} </ion-label>
+        </ion-item>
+        <!-- Fecha de Nacimiento -->
+        <ion-item>
+          <ion-thumbnail>
+            <ion-icon class="icons" name="calendar-outline"></ion-icon>
+          </ion-thumbnail>
+          <ion-label> Edad: {{ edadPaciente }} años </ion-label>
+         </ion-item>
+      <!-- Nombre -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="person-circle-sharp"></ion-icon>
+        </ion-thumbnail>
+        <ion-label>{{ datosUsuarios.primer_nombre }} {{ datosUsuarios.segundo_nombre }} {{ datosUsuarios.apellido_paterno }} {{ datosUsuarios.apellido_materno }}</ion-label>
+        <ion-button id="open-modal-nombre" expand="block" class="edit"><ion-icon name="create-outline"></ion-icon></ion-button>
+      </ion-item>
+      <!-- Modal para cambiar nombre -->
+      <ion-modal trigger="open-modal-nombre" (willDismiss)="onWillDismiss($event)">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()">Cancel</ion-button>
+              </ion-buttons>
+              <ion-title>Welcome</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="confirmNombre()" [strong]="true">Confirm</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-input
+                label="Primer nombre"
+                labelPlacement="stacked"
+                type="text"
+                placeholder="{{ datosUsuarios.primer_nombre }}"
+                [(ngModel)]="mdl_primer_nombre"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="Segundo nombre"
+                labelPlacement="stacked"
+                type="text"
+                placeholder="{{ datosUsuarios.segundo_nombre }}"
+                [(ngModel)]="mdl_segundo_nombre"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="Apellido paterno"
+                labelPlacement="stacked"
+                type="text"
+                placeholder="{{ datosUsuarios.apellido_paterno }}"
+                [(ngModel)]="mdl_apellido_paterno"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="Apellido materno"
+                labelPlacement="stacked"
+                type="text"
+                placeholder="{{ datosUsuarios.apellido_materno }}"
+                [(ngModel)]="mdl_apellido_materno"
+              ></ion-input>
+            </ion-item>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <!-- Sexo -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="male-female-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> Sexo: {{ datosUsuarios.sexo === 'M' ? 'Masculino' : 'Femenino' }} </ion-label>
+        <ion-button id="open-modal-sexo" expand="block" class="edit"><ion-icon name="create-outline"></ion-icon></ion-button>
+       </ion-item>
+       <!-- Modal para cambiar sexo -->
+       <ion-modal trigger="open-modal-sexo" (willDismiss)="onWillDismissSexo($event)" (willPresent)="preSeleccionarSexo()">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()">Cancel</ion-button>
+              </ion-buttons>
+              <ion-title>Cambiar Sexo</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="confirmSexo()" [strong]="true">Confirm</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-list>
+              <ion-radio-group [(ngModel)]="sexoSeleccionado">
+                <ion-item>
+                  <ion-label>Masculino</ion-label>
+                  <ion-radio slot="start" value="Masculino"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Femenino</ion-label>
+                  <ion-radio slot="start" value="Femenino"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <!-- Teléfono -->
+      <ion-item>
+        <ion-thumbnail>
+          <ion-icon class="icons" name="call-outline"></ion-icon>
+        </ion-thumbnail>
+        <ion-label> {{ datosUsuarios.telefono }} </ion-label>
+        <ion-button id="open-modal-telefono" expand="block" class="edit"><ion-icon name="create-outline"></ion-icon></ion-button>
+      </ion-item>
+      <!-- Modal para cambiar número telefónico -->
+      <ion-modal trigger="open-modal-telefono" (willDismiss)="onWillDismissTelefono($event)">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()">Cancel</ion-button>
+              </ion-buttons>
+              <ion-title>Cambiar Teléfono</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="confirmTelefono()" [strong]="true">Confirm</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-input
+                label="Nuevo número telefónico"
+                labelPlacement="stacked"
+                type="text"
+                placeholder="{{ datosUsuarios.telefono }}"
+                [(ngModel)]="mdl_telefono"
+              ></ion-input>
+            </ion-item>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <!-- Modal para modificar contraseña -->
+      <ion-item>
+        <ion-thumbnail>
+        </ion-thumbnail>
+        <ion-button id="open-modal-contrasena" expand="block" class="edit-contrasena"><ion-icon name="create-outline"></ion-icon>Modificar Contraseña</ion-button>
+      </ion-item>
 
     </ion-list>
   </ion-card-content>
