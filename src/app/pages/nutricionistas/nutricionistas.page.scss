@@ -1,0 +1,35 @@
+.nutricionista-card {
+    width: 100%;
+    background-color: #CFE2FF;
+    margin: 12px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra ligera y elegante para móvil */
+    border: none;
+  }
+  
+  .nutricionista-card ion-card-header {
+    padding: 16px;
+  }
+  
+  .nutricionista-card ion-card-title {
+    font-size: 1.2rem;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  
+  .nutricionista-card ion-card-subtitle {
+    font-size: 1rem;
+    color: #333;
+  }
+
+  .especialidad-chip {
+    display: flex; /* Asegura que el contenedor use flexbox */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+}
+
+  .sin-especialidad {
+    display: flex; /* Asegura que el contenedor use flexbox */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+}

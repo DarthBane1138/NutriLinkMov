@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
 export class ApiService {
 
   ruta: string = 'https://nutrilinkapi-production.up.railway.app';
-
+  //ruta: string = 'http://localhost:3000';
+  
   constructor(private http: HttpClient) { }
 
   loginUsuario (correo: string, contrasena: string) {
@@ -82,5 +83,25 @@ export class ApiService {
   
     return this.http.patch(this.ruta + "/api_nutrilink/paciente/modificar_contrasena", objeto).pipe();
   }
+
+  obtenerEspecialidadesNutricionista(id_nutricionista: number) {
+    return this.http.get(this.ruta + `/api_nutrilink/nutricionista/obtener_nutricionista_especialidades/${id_nutricionista}`);
+  }
+
+  obtenerAntropometria (id_paciente: number) {
+    let objeto: any = {};
+    objeto.id_paciente = id_paciente;
+
+    return this.http.post(this.ruta + "/api_nutrilink/paciente/obtener_antropometria", objeto).pipe()
+  }
+
+  obtenerCalculosAntropometricos(pacienteId: number, fecha: string): Observable<any> {
+    const params = new HttpParams()
+      .set('pacienteId', pacienteId.toString())
+      .set('fecha', fecha); // formato esperado: 'YYYY-MM-DD'
+
+    return this.http.get(`/api_nutrilink/obtener_calculos_antropometricos`, { params });
+  }
+
 
 }

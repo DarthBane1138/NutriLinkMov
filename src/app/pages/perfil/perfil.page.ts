@@ -26,6 +26,9 @@ export class PerfilPage implements OnInit {
   mdl_apellido_paterno: string = '';
   mdl_apellido_materno: string = '';
   mdl_telefono: string = '';
+  mdl_contrasena_antigua = '';
+  mdl_contrasena_nueva = '';
+  mdl_contrasena_nueva_conf = '';
   
   constructor(private db: DblocalService, private api: ApiService, private modal: ModalController) { }
 
@@ -175,6 +178,49 @@ export class PerfilPage implements OnInit {
         console.error('Error al modificar teléfono:', error);
       }
     }
+
+    async confirmContrasena() {
+      // Validaciones básicas
+      if (!this.mdl_contrasena_antigua) {
+        return this.mostrarAlerta('Debe ingresar su contraseña actual.');
+      }
+    
+      if (!this.mdl_contrasena_nueva) {
+        return this.mostrarAlerta('Debe ingresar una nueva contraseña.');
+      }
+    
+      if (this.mdl_contrasena_nueva !== this.mdl_contrasena_nueva_conf) {
+        return this.mostrarAlerta('La confirmación de contraseña no coincide.');
+      }
+    
+      try {
+        const respuesta: any = await lastValueFrom(
+          this.api.cambiarContrasenaPaciente(
+            this.datosUsuarios.id_paciente,
+            this.mdl_contrasena_antigua,
+            this.mdl_contrasena_nueva
+          )
+        );
+    
+        if (respuesta.status === 'ok') {
+          this.mostrarAlerta('Contraseña actualizada con éxito.', true);
+          this.modal.dismiss('confirm');
+        } else {
+          this.mostrarAlerta(respuesta.mensaje || 'No se pudo actualizar la contraseña.');
+        }
+      } catch (error: any) {
+        console.error('Error al cambiar contraseña:', error);
+      
+        // Intentamos leer el mensaje del error si existe
+        let errorMensaje = 'Hubo un error inesperado.';
+        
+        if (error?.error?.mensaje) {
+          errorMensaje = error.error.mensaje;
+        }
+      
+        this.mostrarAlerta(errorMensaje);
+      }
+    }
   
     onWillDismiss(event: CustomEvent<OverlayEventDetail>) {
       if (event.detail.role === 'confirm') {
@@ -194,6 +240,12 @@ export class PerfilPage implements OnInit {
       }
     }
 
+    onWillDismissContrasena(event: CustomEvent<OverlayEventDetail>) {
+      if (event.detail.role === 'confirm') {
+        console.log('Teléfono actualizado correctamente.');
+      }
+    }
+    
     preSeleccionarSexo() {
       if (this.datosUsuarios.sexo === 'M') {
         this.sexoSeleccionado = 'Masculino';
@@ -201,6 +253,24 @@ export class PerfilPage implements OnInit {
         this.sexoSeleccionado = 'Femenino';
       } else {
         this.sexoSeleccionado = '';
+      }
+    }
+
+    async mostrarAlerta(mensaje: string, exito: boolean = false) {
+      const alert = document.createElement('ion-alert');
+      alert.header = exito ? 'Éxito' : 'Advertencia';
+      alert.message = mensaje;
+      alert.buttons = ['OK'];
+      document.body.appendChild(alert);
+      await alert.present();
+    }
+
+    async cargarEspecialidades(idNutricionista: number) {
+      try {
+        const especialidades = await lastValueFrom(this.api.obtenerEspecialidadesNutricionista(idNutricionista));
+        console.log('Especialidades del nutricionista:', especialidades);
+      } catch (error) {
+        console.error('Error al cargar especialidades:', error);
       }
     }
 

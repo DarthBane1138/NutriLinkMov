@@ -52,7 +52,7 @@
               <ion-buttons slot="start">
                 <ion-button (click)="cancel()">Cancel</ion-button>
               </ion-buttons>
-              <ion-title>Welcome</ion-title>
+              <ion-title>Modificar Nombre</ion-title>
               <ion-buttons slot="end">
                 <ion-button (click)="confirmNombre()" [strong]="true">Confirm</ion-button>
               </ion-buttons>
@@ -171,13 +171,55 @@
           </ion-content>
         </ng-template>
       </ion-modal>
-      <!-- Modal para modificar contraseña -->
+      <!-- Contraseña -->
       <ion-item>
-        <ion-thumbnail>
-        </ion-thumbnail>
         <ion-button id="open-modal-contrasena" expand="block" class="edit-contrasena"><ion-icon name="create-outline"></ion-icon>Modificar Contraseña</ion-button>
       </ion-item>
-
+      <!-- Modal para modificar contraseña -->
+      <ion-modal trigger="open-modal-contrasena" (willDismiss)="onWillDismissContrasena($event)">
+        <ng-template>
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()">Cancel</ion-button>
+              </ion-buttons>
+              <ion-title>Modificar Contraseña</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="confirmContrasena()" [strong]="true">Confirm</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-input
+                label="Contraseña Antigua"
+                labelPlacement="stacked"
+                type="password"
+                placeholder="Ingrese su contraseña actual"
+                [(ngModel)]="mdl_contrasena_antigua"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+                label="Contraseña Nueva"
+                labelPlacement="stacked"
+                type="password"
+                placeholder="Contrasena nueva"
+                [(ngModel)]="mdl_contrasena_nueva"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input
+              label="Confirme Contraseña Nueva"
+              labelPlacement="stacked"
+              type="password"
+              placeholder="Confirme contraseña nueva"
+              [(ngModel)]="mdl_contrasena_nueva_conf"
+              ></ion-input>
+            </ion-item>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
     </ion-list>
   </ion-card-content>
 </ion-card>

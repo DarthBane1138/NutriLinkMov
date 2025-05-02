@@ -118,13 +118,24 @@ export class HomePage {
       const respuesta: any[] = await lastValueFrom(datos);
   
       for (const nutri of respuesta) {
+        // console.log("PLF: Nutri completo:", JSON.stringify(nutri, null, 2));
+        const id_nutricionista = nutri.id_nutricionista;
+        
         const nutricionista: any = {
+          id_nutricionista: id_nutricionista,
           primer_nombre: nutri.primer_nombre,
           apellido_p: nutri.apellido_materno,
-          correo: nutri.correo
+          correo: nutri.correo,
+          especialidades: []
         };
+        // console.log('PLF - Nombre:', nutri.primer_nombre);
+        // console.log('PLF - ID:', id_nutricionista);
+        
+        // Obtener especialidades con manejo de respuestas según la API
+        const especialidades = await this.obtenerEspecialidadesNutricionista(id_nutricionista);
+        nutricionista.especialidades = especialidades;
   
-        console.log("PLF: Nutri", nutricionista.primer_nombre);
+        //console.log("PLF: Nutri", nutricionista.primer_nombre, "Especialidades:", nutricionista.especialidades);
         this.datosNutris.push(nutricionista);
       }
     } catch (error) {
@@ -132,7 +143,29 @@ export class HomePage {
     }
   }
 
-  async verMisNutricionistas() {
+  async obtenerEspecialidadesNutricionista(id_nutricionista: number): Promise<any[]> {
+    try {
+      //console.log("PLF: El id del nutri es: " + id_nutricionista)
+      const respuesta = await lastValueFrom(this.api.obtenerEspecialidadesNutricionista(id_nutricionista));
+  
+      // Si la respuesta es un array, contiene especialidades válidas
+      if (Array.isArray(respuesta)) {
+        //console.log('PLF: Especialidades obtenidas para nutricionista', id_nutricionista, respuesta);
+        return respuesta;
+      }
+  
+      // Si no es un array, probablemente vino un mensaje informativo desde el servidor
+      if (respuesta && typeof respuesta === 'object' && 'mensaje' in respuesta) {
+        console.warn(`PLF: Nutricionista ${id_nutricionista} sin especialidades:`, respuesta.mensaje);
+      } else {
+        console.warn(`PLF: Respuesta inesperada para nutricionista ${id_nutricionista}:`, respuesta);
+      }
+  
+      return []; // Devolvemos array vacío si no hay especialidades o hay error controlado
+    } catch (error) {
+      console.error('PLF Error al obtener especialidades del nutricionista:', error);
+      return [];
+    }
   }
 
   cerrarSesion() {

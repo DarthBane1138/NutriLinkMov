@@ -5,11 +5,47 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">datos-antropometricos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+<!-- Lista de fechas -->
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Selecciona una fecha</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-button 
+      *ngFor="let reg of registrosAntropometria" 
+      expand="block" 
+      (click)="mostrarRegistro(reg)">
+      {{ reg.fecha }}
+    </ion-button>
+  </ion-card-content>
+</ion-card>
+
+<!-- Tarjeta con los datos de la fecha seleccionada -->
+<ion-card *ngIf="fecha">
+  <ion-card-header>
+    <ion-card-title>Datos Antropométricos</ion-card-title>
+    <ion-card-subtitle>Paciente ID: {{ id_paciente }} - Fecha: {{ fecha }}</ion-card-subtitle>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item><ion-label>Peso (kg):</ion-label><ion-note slot="end">{{ peso }}</ion-note></ion-item>
+    <ion-item><ion-label>Talla (cm):</ion-label><ion-note slot="end">{{ talla }}</ion-note></ion-item>
+    <ion-item><ion-label>Cintura (cm):</ion-label><ion-note slot="end">{{ cintura }}</ion-note></ion-item>
+    <ion-item><ion-label>Brazo (mm):</ion-label><ion-note slot="end">{{ brazo }}</ion-note></ion-item>
+    <ion-item><ion-label>Pliegue Tricipital (mm):</ion-label><ion-note slot="end">{{ tricipital }}</ion-note></ion-item>
+    <ion-item><ion-label>Pliegue Bicipital (mm):</ion-label><ion-note slot="end">{{ bicipital }}</ion-note></ion-item>
+    <ion-item><ion-label>Pliegue Suprailiaco (mm):</ion-label><ion-note slot="end">{{ suprailiaco }}</ion-note></ion-item>
+    <ion-item><ion-label>Pliegue Subescapular (mm):</ion-label><ion-note slot="end">{{ subescapular }}</ion-note></ion-item>
+  </ion-card-content>
+</ion-card>
+
+  <ion-card *ngIf="!peso && mensajeError">
+    <ion-card-header>
+      <ion-card-title>Error</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ mensajeError }}</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
 <app-nav-bar></app-nav-bar>

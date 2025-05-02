@@ -6,13 +6,25 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <h1> Estos son los nutricionistas disponibles</h1>
+  <div class="panel-uno">
+    <h1> Estos son los nutricionistas disponibles</h1>
+  </div>
   <ion-item *ngFor="let nutricionista of listaNutricionistas">
-    <ion-card>
+    <ion-card class="nutricionista-card">
       <ion-card-header>
-        <ion-card-title>{{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</ion-card-title>
-        <ion-card-title>{{ nutricionista.correo }}</ion-card-title>
+        <ion-card-title> Nombre: {{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</ion-card-title>
+        <ion-card-title>Correo: {{ nutricionista.correo }}</ion-card-title>
       </ion-card-header>
+      <!-- Especialidades -->
+      <div *ngIf="nutricionista.especialidades.length > 0; else sinEspecialidades" class="especialidad-chip">
+        <ion-chip *ngFor="let especialidad of nutricionista.especialidades">
+          {{ especialidad.descripcion }}
+        </ion-chip>
+      </div>
+      <!-- Si no tiene especialidades -->
+      <ng-template #sinEspecialidades>
+        <p class="sin-especialidad"><i>Sin especialidades registradas</i></p>
+      </ng-template>
     </ion-card>
   </ion-item>
 </ion-content>
