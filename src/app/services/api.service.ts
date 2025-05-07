@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators'; // Asegúrate de tener este import
 
 @Injectable({
   providedIn: 'root'
@@ -95,13 +96,20 @@ export class ApiService {
     return this.http.post(this.ruta + "/api_nutrilink/paciente/obtener_antropometria", objeto).pipe()
   }
 
-  obtenerCalculosAntropometricos(pacienteId: number, fecha: string): Observable<any> {
+  obtenerCalculosAntropometricos(id_paciente: number, fecha: string): Observable<any> {
     const params = new HttpParams()
-      .set('pacienteId', pacienteId.toString())
-      .set('fecha', fecha); // formato esperado: 'YYYY-MM-DD'
-
-    return this.http.get(`/api_nutrilink/obtener_calculos_antropometricos`, { params });
+      .set('pacienteId', id_paciente.toString())
+      .set('fecha', fecha);
+  
+    return this.http.get(this.ruta + `/api_nutrilink/antropometria/obtener_calculos_antropometricos`, { params });
   }
 
+  obtenerDiagnosticosAntropometricos(id_paciente: number, fecha: string): Observable<any>{
+    const params = new HttpParams()
+    .set('pacienteId', id_paciente.toString())
+    .set('fecha', fecha);
+
+    return this.http.get(this.ruta + '/api_nutrilink/antropometria/obtener_diagnosticos_antropometricos', { params });
+  }
 
 }

@@ -23,6 +23,10 @@ export class DatosAntropometricosPage implements OnInit {
   id_paciente: number = 0;
   fecha: string = '';
   registrosAntropometria: any[] = [];
+  calculosAntropometricos: any = null;
+  mensajeErrorCalculos: string = '';
+  diagnosticosAntropometricos: string[] = [];
+  mensajeErrorDiagnosticos: string = '';
 
   constructor(private api: ApiService, private db: DblocalService) { }
 
@@ -93,6 +97,53 @@ export class DatosAntropometricosPage implements OnInit {
     this.bicipital = registro.bicipital;
     this.suprailiaco = registro.suprailiaco;
     this.subescapular = registro.subescapular;
+  
+    // Limpiar resultados anteriores
+    this.calculosAntropometricos = null;
+    this.mensajeErrorCalculos = '';
+  
+    // Formatea la fecha a YYYY-MM-DD
+    const partes = registro.fecha.split('-');
+    const fechaFormatoApi = `${partes[2]}-${partes[1]}-${partes[0]}`;
+  
+    console.log("PLF con estos datos vamos a obtener los calculos: " + this.id_paciente + fechaFormatoApi)
+    // Llamar a los cálculos antropométricos
+    this.api.obtenerCalculosAntropometricos(this.id_paciente, fechaFormatoApi)
+      .subscribe({
+        next: (resp) => {
+          if (resp.status === 'success') {
+            this.calculosAntropometricos = resp.data;
+          } else {
+            this.mensajeErrorCalculos = resp.mensaje || 'No se pudieron obtener los cálculos.';
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener cálculos antropométricos:', err);
+          this.mensajeErrorCalculos = 'Error al conectar con el servidor de cálculos.';
+        }
+      });
+
+    console.log("PLF con estos datos vamos a obtener los diagnósticos: " + this.id_paciente + fechaFormatoApi)
+    // Llamar a los diagnósticos antropométricos
+    this.api.obtenerDiagnosticosAntropometricos(this.id_paciente, fechaFormatoApi)
+    .subscribe({
+      next: (resp) => {
+        if (resp.status === 'success') {
+          const diagnosticosArray = resp.data?.diagnosticos || [];
+  
+          this.diagnosticosAntropometricos = diagnosticosArray.map((item: any) => item.descripcion);
+  
+          // Si deseas mostrarlos por consola para prueba
+          console.log('Diagnósticos antropométricos:', this.diagnosticosAntropometricos);
+        } else {
+          this.mensajeErrorDiagnosticos = resp.mensaje || 'No se pudieron obtener los diagnósticos.';
+        }
+      },
+      error: (err) => {
+        console.error('PLF: Error al obtener diagnósticos antropométricos:', JSON.stringify(err, null, 2));
+        this.mensajeErrorDiagnosticos = 'Error al conectar con el servidor de diagnósticos.';
+      }
+    });
   }
 
   mostrarAlerta(arg0: string, mensaje: any) {

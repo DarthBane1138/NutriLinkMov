@@ -39,6 +39,56 @@
   </ion-card-content>
 </ion-card>
 
+<!-- Tarjeta con los cálculos antropométricos -->
+<ion-card *ngIf="calculosAntropometricos">
+  <ion-card-header>
+    <ion-card-title>Cálculos Antropométricos</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item><ion-label>IMC:</ion-label><ion-note slot="end">{{ calculosAntropometricos.imc }}</ion-note></ion-item>
+    <ion-item><ion-label>Índice Cintura/Talla:</ion-label><ion-note slot="end">{{ calculosAntropometricos.indice_cintura_talla }}</ion-note></ion-item>
+    <ion-item><ion-label>Perímetro Muscular Braquial:</ion-label><ion-note slot="end">{{ calculosAntropometricos.perimetro_muscular_braquial }}</ion-note></ion-item>
+    <ion-item><ion-label>Área Muscular Braquial:</ion-label><ion-note slot="end">{{ calculosAntropometricos.area_muscular_braquial }}</ion-note></ion-item>
+    <ion-item><ion-label>Área Grasa Braquial:</ion-label><ion-note slot="end">{{ calculosAntropometricos.area_grasa_braquial }}</ion-note></ion-item>
+    <ion-item><ion-label>% Grasa:</ion-label><ion-note slot="end">{{ calculosAntropometricos.porc_grasa }}</ion-note></ion-item>
+  </ion-card-content>
+</ion-card>
+
+<!-- Tarjeta con los diagnósticos antropométricos -->
+<ion-card *ngIf="diagnosticosAntropometricos && diagnosticosAntropometricos.length > 0">
+  <ion-card-header>
+    <ion-card-title>Diagnósticos Antropométricos</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let diagnostico of diagnosticosAntropometricos">
+        <ion-icon name="medkit-outline" slot="start"></ion-icon>
+        <ion-label>{{ diagnostico }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+<!-- Tarjeta cuando no hay diagnósticos disponibles -->
+<ion-card *ngIf="diagnosticosAntropometricos && diagnosticosAntropometricos.length === 0 && !mensajeErrorDiagnosticos">
+  <ion-card-header>
+    <ion-card-title>Diagnósticos Antropométricos</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <p>No hay diagnósticos disponibles para la fecha seleccionada.</p>
+  </ion-card-content>
+</ion-card>
+
+<!-- Tarjeta de error si no hay cálculos -->
+<ion-card *ngIf="mensajeErrorCalculos">
+  <ion-card-header>
+    <ion-card-title>Error al obtener cálculos</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <p>{{ mensajeErrorCalculos }}</p>
+  </ion-card-content>
+</ion-card>
+
   <ion-card *ngIf="!peso && mensajeError">
     <ion-card-header>
       <ion-card-title>Error</ion-card-title>
