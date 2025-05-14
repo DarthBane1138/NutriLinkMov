@@ -89,11 +89,8 @@ export class ApiService {
     return this.http.get(this.ruta + `/api_nutrilink/nutricionista/obtener_nutricionista_especialidades/${id_nutricionista}`);
   }
 
-  obtenerAntropometria (id_paciente: number) {
-    let objeto: any = {};
-    objeto.id_paciente = id_paciente;
-
-    return this.http.post(this.ruta + "/api_nutrilink/paciente/obtener_antropometria", objeto).pipe()
+  obtenerAntropometria(id_paciente: number) {
+    return this.http.get(`${this.ruta}/api_nutrilink/paciente/obtener_antropometria/${id_paciente}`);
   }
 
   obtenerCalculosAntropometricos(id_paciente: number, fecha: string): Observable<any> {
@@ -111,5 +108,11 @@ export class ApiService {
 
     return this.http.get(this.ruta + '/api_nutrilink/antropometria/obtener_diagnosticos_antropometricos', { params });
   }
+
+  obtenerDisponibilidadNutricionista(id_nutricionista: number): Observable<any> {
+  return this.http.get(`${this.ruta}/api_nutrilink/agenda/disponibilidad_nutricionista/${id_nutricionista}`, {
+    responseType: 'json' as 'json'
+  });
+}
 
 }

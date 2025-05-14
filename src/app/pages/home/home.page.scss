@@ -51,3 +51,15 @@
 .link-nutris:hover {
   color: #333333;
 }
+
+.nutricionista-item {
+  border: 1px solid #e0e0e0;      // Borde suave
+  border-radius: 12px;           // Bordes redondeados
+  margin-bottom: 12px;           // Espacio entre elementos
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); // Sombra ligera
+  transition: transform 0.2s ease;
+}
+
+.nutricionista-item:hover {
+  transform: scale(1.01);        // Efecto sutil al pasar el dedo
+}
