@@ -1,15 +1,58 @@
 <ion-header class="ion-padding-top">
   <ion-toolbar class="toolbar">
     <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
-    <ion-title>agenda</ion-title>
+    <ion-title>Mis Citas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">agenda</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+<!-- Próximas Citas -->
+<ion-card *ngIf="citasProximas.length > 0; else sinProximas">
+  <ion-card-header>
+    <ion-card-title>Próximas Citas</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let cita of citasProximas">
+        <ion-label>
+          <h2>{{ obtenerFecha(cita.fecha_hora) }}</h2>
+          <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
+          <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
+          <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
+          <p><strong>Hecho relevante:</strong> {{ cita.hecho_relevante }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+<ng-template #sinProximas>
+  <ion-text color="medium">No tienes próximas citas registradas.</ion-text>
+</ng-template>
+
+<!-- Historial de Citas -->
+<ion-card *ngIf="citasPasadas.length > 0; else sinPasadas">
+  <ion-card-header>
+    <ion-card-title>Historial de Citas</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let cita of citasPasadas">
+        <ion-label>
+          <h2>{{ obtenerFecha(cita.fecha_hora) }}</h2>
+          <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
+          <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
+          <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
+          <p><strong>Hecho relevante:</strong> {{ cita.hecho_relevante }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
+
+<ng-template #sinPasadas>
+  <ion-text color="medium">No tienes citas anteriores registradas.</ion-text>
+</ng-template>
 </ion-content>
+
 <app-nav-bar></app-nav-bar>
