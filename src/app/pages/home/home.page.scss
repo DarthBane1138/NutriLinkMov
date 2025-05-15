@@ -2,8 +2,8 @@
   bottom: 0;
   background-color: #f4f4f4;
   flex: 1;
-  padding: 1rem;
-  height: 45%;
+  padding: 0.5rem;
+  height: 40%;
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
   width: 100%;
@@ -14,7 +14,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 5px;
 }
 
 .cuadro {
@@ -54,12 +54,40 @@
 
 .nutricionista-item {
   border: 1px solid #e0e0e0;      // Borde suave
-  border-radius: 12px;           // Bordes redondeados
-  margin-bottom: 12px;           // Espacio entre elementos
+  border-radius: 12px;           // Bordes redondeados          // Espacio entre elementos
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); // Sombra ligera
   transition: transform 0.2s ease;
 }
 
 .nutricionista-item:hover {
   transform: scale(1.01);        // Efecto sutil al pasar el dedo
+}
+
+.separador-fecha {
+  background-color: #f0f0f0; // gris claro
+  padding: 10px 16px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.texto-fecha {
+  text-align: center;
+  font-weight: 600;
+  color: #444;
+  font-size: 15px;
+}
+
+.nota_disponibilidad {
+  font-size: 14px;
+  color: #555;
+  margin: 2px 0 2px 0;
+  font-style: italic;
+}
+
+.mis-nutris {
+  padding-bottom: 10px;
+}
+
+.lista-nutris {
+  margin: -12px 0; /* Opcional: reduce el espacio entre cards */
 }

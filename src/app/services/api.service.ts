@@ -115,4 +115,25 @@ export class ApiService {
   });
 }
 
+  solicitarCita(
+    id_paciente: number,
+    id_disponibilidad: number,
+    motivo_consulta: string,
+    hecho_relevante: string
+  ): Observable<any> {
+    const body = {
+      id_paciente,
+      id_disponibilidad,
+      motivo_consulta,
+      hecho_relevante
+    };
+
+    return this.http.post(`${this.ruta}/api_nutrilink/agenda/solicitar_cita`, body);
+  }
+
+  obtenerCitasPaciente(id_paciente: number): Observable<any> {
+    console.log('PLF Obteniendo citas de paciente: ' + id_paciente)
+    return this.http.get(`${this.ruta}/api_nutrilink/agenda/citas_paciente/${id_paciente}`);
+  }
+
 }

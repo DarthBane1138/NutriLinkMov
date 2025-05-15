@@ -9,10 +9,10 @@
   <div class="panel-uno">
     <h1> Estos son los nutricionistas disponibles</h1>
   </div>
-  <ion-item *ngFor="let nutricionista of listaNutricionistas">
+  <ion-item *ngFor="let nutricionista of listaNutricionistas" (click)="abrirModal(nutricionista)">
     <ion-card class="nutricionista-card">
       <ion-card-header>
-        <ion-card-title> Nombre: {{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</ion-card-title>
+        <ion-card-title>Nombre: {{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</ion-card-title>
         <ion-card-title>Correo: {{ nutricionista.correo }}</ion-card-title>
       </ion-card-header>
       <!-- Especialidades -->
@@ -29,3 +29,88 @@
   </ion-item>
 </ion-content>
 <app-nav-bar></app-nav-bar>
+
+<!-- Modal: Agendar Cita con Nutricionista -->
+<ion-modal [isOpen]="mostrarModal" (didDismiss)="cerrarModal()">
+  <ng-template>
+    <!-- Header con nombre -->
+    <ion-header class="ion-padding-top">
+      <ion-toolbar class="toolbar">
+        <ion-title>Agendar con {{ nutricionistaSeleccionado?.primer_nombre }} {{ nutricionistaSeleccionado?.apellido_p
+          }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrarModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <!-- Contenido Modal -->
+    <ion-content class="ion-padding">
+      <ion-card *ngIf="disponibilidades.length > 0; else sinDisponibilidades">
+        <ion-card-header>
+          <ion-card-title>Disponibilidad</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <div *ngFor="let fecha of fechasAgrupadas">
+              <ion-item-divider class="separador-fecha">
+                <div class="texto-fecha">{{ fecha.fecha | date:'fullDate' }}</div>
+              </ion-item-divider>
+              <ion-item *ngFor="let bloque of fecha.bloques">
+                <ion-label>
+                  {{ bloque.hora }} -
+                  <span [ngStyle]="{
+                    color: bloque.esTuReserva ? '#f1c40f' : (bloque.estado === 'Reservada' ? 'red' : 'green'),
+                    'font-weight': bloque.esTuReserva ? 'bold' : 'normal'
+                  }">
+                    {{ bloque.esTuReserva ? 'Tu reserva' : bloque.estado }}
+                  </span>
+                </ion-label>
+                <ion-button size="small" [disabled]="bloque.estado === 'Reservada' || !bloque.habilitada"
+                  (click)="mostrarFormularioCita(bloque)">
+                  Reservar
+                </ion-button>
+              </ion-item>
+            </div>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <ng-template #sinDisponibilidades>
+        <ion-text color="medium">No hay horarios disponibles actualmente.</ion-text>
+      </ng-template>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- Modal para reservar hora -->
+<ion-modal [isOpen]="mostrarModalFormulario" (didDismiss)="cancelarFormulario()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Información de la cita</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cancelarFormulario()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-item>
+        <ion-label position="stacked">Motivo de consulta</ion-label>
+        <ion-input [(ngModel)]="mdl_motivo" placeholder="Ej: Control mensual"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Hecho relevante</ion-label>
+        <ion-input [(ngModel)]="mdl_hecho" placeholder="Ej: Sin antecedentes relevantes"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" color="success" (click)="confirmarAgendarCita()">Confirmar reserva</ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>

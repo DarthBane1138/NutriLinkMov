@@ -3,6 +3,12 @@ import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { DblocalService } from 'src/app/services/dblocal.service';
+import { LOCALE_ID } from '@angular/core';
+import localeEs from '@angular/common/locales/es';
+import { registerLocaleData } from '@angular/common';
+import Swal from 'sweetalert2';
+
+registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-home',
@@ -18,6 +24,20 @@ export class HomePage {
 
   datosUsuarios: any = {};
   datosNutris: any[] = [];
+
+// Para mostrar fechas
+mostrarModal = false;
+nutricionistaSeleccionado: any = null;
+disponibilidades: any[] = [];
+fechasAgrupadas: any[] = [];
+
+mostrarModalFormulario = false;
+bloqueSeleccionado: any = null;
+
+mdl_motivo: string = '';
+mdl_hecho: string = '';
+
+citasDelPaciente: any[] = [];
 
   confirmButtons = [
     {
@@ -186,4 +206,167 @@ export class HomePage {
     this.router.navigate(['nutricionistas'], { replaceUrl: true })
   }
 
+abrirModal(nutricionista: any) {
+  this.nutricionistaSeleccionado = nutricionista;
+
+  // Inicializar para evitar residuos anteriores
+  this.citasDelPaciente = [];
+  this.disponibilidades = [];
+  this.fechasAgrupadas = [];
+  console.log('PLF modal citas abierto con id_paciente: ' + this.datosUsuarios.id_paciente)
+
+  // Primero obtener las citas del paciente
+  this.api.obtenerCitasPaciente(this.datosUsuarios.id_paciente).subscribe({
+    next: (citasPaciente) => {
+      this.citasDelPaciente = (citasPaciente.citas || []).filter((cita: any) => cita.estado === 'Reservada');
+      console.log('PLF Citas del paciente:', this.citasDelPaciente);
+
+      // Luego obtener disponibilidades
+      this.api.obtenerDisponibilidadNutricionista(nutricionista.id_nutricionista).subscribe({
+        next: (response) => {
+          if (response.status === 'ok' && response.disponibilidades) {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            this.disponibilidades = response.disponibilidades.filter((d: any) => {
+              const fechaDisp = new Date(d.fecha);
+              fechaDisp.setHours(0, 0, 0, 0);
+              return fechaDisp >= hoy;
+            });
+
+            this.agruparPorFecha();
+          }
+
+          this.mostrarModal = true;
+        },
+        error: (err) => {
+          console.error('PLF Error al obtener disponibilidad:', err);
+          this.mostrarModal = true; // Aun así mostrar modal
+        }
+      });
+    },
+    error: (err) => {
+      console.error('PLF Error al obtener citas del paciente:', err);
+      console.error('PLF Detalles:', JSON.stringify(err));
+
+      // Obtener disponibilidad de todas formas
+      this.api.obtenerDisponibilidadNutricionista(nutricionista.id_nutricionista).subscribe({
+        next: (response) => {
+          if (response.status === 'ok' && response.disponibilidades) {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            this.disponibilidades = response.disponibilidades.filter((d: any) => {
+              const fechaDisp = new Date(d.fecha);
+              fechaDisp.setHours(0, 0, 0, 0);
+              return fechaDisp >= hoy;
+            });
+
+            this.agruparPorFecha();
+          }
+
+          this.mostrarModal = true;
+        },
+        error: (err) => {
+          console.error('PLF Error al obtener disponibilidad tras fallo de citas:', err);
+          this.mostrarModal = true;
+        }
+      });
+    }
+  });
+}
+
+agruparPorFecha() {
+  const agrupado: { [fecha: string]: any[] } = {};
+
+  for (const disp of this.disponibilidades) {
+    const fechaISO = new Date(disp.fecha).toISOString().split('T')[0];
+    if (!agrupado[fechaISO]) agrupado[fechaISO] = [];
+    agrupado[fechaISO].push(disp);
+  }
+
+  this.fechasAgrupadas = Object.entries(agrupado).map(([fecha, bloques]) => {
+    const bloquesCasteados = bloques as any[];
+
+    const pacienteTieneCitaEseDia = this.citasDelPaciente.some((cita: any) => {
+      const fechaCita = cita.fecha_hora?.split('T')[0];
+      return fechaCita === fecha && cita.estado === 'Reservada';
+    });
+
+    const bloquesProcesados = bloquesCasteados.map(b => {
+      const bloqueFecha = b.fecha.split('T')[0];
+      const bloqueHora = b.hora;
+
+      const citaPaciente = this.citasDelPaciente.find((cita: any) => {
+        const fechaCita = cita.fecha_hora?.split('T')[0];
+        const horaCita = cita.fecha_hora?.split('T')[1]?.substring(0, 5); // 'HH:mm'
+        return fechaCita === bloqueFecha && horaCita === bloqueHora.substring(0, 5);
+      });
+
+      return {
+        ...b,
+        habilitada: b.estado === 'Disponible' && !pacienteTieneCitaEseDia,
+        esTuReserva: citaPaciente !== undefined
+      };
+    });
+
+    return {
+      fecha,
+      bloques: bloquesProcesados
+    };
+  });
+}
+
+cerrarModal() {
+  this.mostrarModal = false;
+  this.nutricionistaSeleccionado = null;
+  this.disponibilidades = [];
+  this.fechasAgrupadas = [];
+}
+
+mostrarFormularioCita(bloque: any) {
+  this.bloqueSeleccionado = bloque;
+  this.mdl_motivo = '';
+  this.mdl_hecho = '';
+  this.mostrarModalFormulario = true;
+}
+
+cancelarFormulario() {
+  this.mostrarModalFormulario = false;
+  this.bloqueSeleccionado = null;
+}
+
+confirmarAgendarCita() {
+  const id_paciente = this.datosUsuarios?.id_paciente;
+
+  if (!id_paciente || !this.bloqueSeleccionado) {
+    console.error('Datos incompletos');
+    return;
+  }
+
+  this.api.solicitarCita(
+    id_paciente,
+    this.bloqueSeleccionado.id_disponibilidad,
+    this.mdl_motivo,
+    this.mdl_hecho
+  ).subscribe({
+    next: (response) => {
+      if (response.status === 'ok') {
+        this.disponibilidades = this.disponibilidades.filter(
+          (d: any) => d.id_disponibilidad !== this.bloqueSeleccionado.id_disponibilidad
+        );
+        this.agruparPorFecha();
+        this.cerrarModal();
+      } else {
+        console.error(response.mensaje);
+      }
+
+      this.cancelarFormulario();
+    },
+    error: (err) => {
+      console.error(err);
+      this.cancelarFormulario();
+    }
+  });
+}
 }

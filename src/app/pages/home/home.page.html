@@ -9,58 +9,142 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- Bienvenida a Paciente -->
 <ion-content [fullscreen]="true">
-<div class="panel-uno">
-  <h1>Hola {{ datosUsuarios.primer_nombre }} {{ obtenerEmojiGenero() }} !!</h1>
-</div>
-<div class="panel-dos">
-  <p>Seleccione una actividad<p>
+  <div class="panel-uno">
+    <h1>Hola {{ datosUsuarios.primer_nombre }} {{ obtenerEmojiGenero() }} !!</h1>
+  </div>
+  <div class="panel-dos">
+    <p>Seleccione una actividad
+    <p>
+    <!-- Menú selección actividad -->
     <div class="cuadrados">
       <div class="cuadro azul" (click)="irDatosAntropometricos()">Ver datos antropométricos</div>
       <div class="cuadro verde" (click)="irPlanNutricional()">Plan nutricional</div>
-      <div class="cuadro amarillo" (click)="irAgendarCita()">Agendar cita</div>
+      <div class="cuadro amarillo" (click)="irAgendarCita()">Agenda</div>
     </div>
-</div>
+  </div>
 
-<!-- Card para mostrar Mis Nutricionistas -->
-<ion-card>
-  <ion-card-header>
-    <ion-card-title>Mis nutricionistas</ion-card-title>
-  </ion-card-header>
-  <ion-card-content *ngFor="let nutricionista of datosNutris">
-    <!-- Nutricionista -->
-    <ion-item lines="none" class="nutricionista-item">
-      <ion-thumbnail slot="start">
-        <img alt="Foto del nutricionista" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-      </ion-thumbnail>
-      <ion-label class="ion-text-wrap">
-        <h2 class="ion-text-capitalize">{{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</h2>
-        <p>{{ nutricionista.correo }}</p>
-        <!-- Especialidades -->
-        <div *ngIf="nutricionista.especialidades.length > 0; else sinEspecialidades">
-          <ion-chip *ngFor="let especialidad of nutricionista.especialidades" class="especialidad-chip">
-            {{ especialidad.descripcion }}
-          </ion-chip>
-        </div>
-        <!-- Si no tiene especialidades -->
-        <ng-template #sinEspecialidades>
-          <p><i>Sin especialidades registradas</i></p>
-        </ng-template>
-      </ion-label>
-    </ion-item>
-  </ion-card-content>
-</ion-card>
+  <!-- Card para mostrar Mis Nutricionistas -->
+  <ion-card class="mis-nutris">
+    <ion-card-header>
+      <ion-card-title>Mis nutricionistas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content *ngFor="let nutricionista of datosNutris" class="lista-nutris">
+      <!-- Nutricionista -->
+      <ion-item lines="none" class="nutricionista-item" (click)="abrirModal(nutricionista)">
+        <ion-thumbnail slot="start">
+          <img alt="Foto del nutricionista" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+        </ion-thumbnail>
+        <ion-label class="ion-text-wrap">
+          <h2 class="ion-text-capitalize">{{ nutricionista.primer_nombre }} {{ nutricionista.apellido_p }}</h2>
+          <p>{{ nutricionista.correo }}</p>
+          <!-- Especialidades -->
+          <div *ngIf="nutricionista.especialidades.length > 0; else sinEspecialidades">
+            <ion-chip *ngFor="let especialidad of nutricionista.especialidades" class="especialidad-chip">
+              {{ especialidad.descripcion }}
+            </ion-chip>
+          </div>
+          <!-- Si no tiene especialidades -->
+          <ng-template #sinEspecialidades>
+            <p><i>Sin especialidades registradas</i></p>
+          </ng-template>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-<div (click)="irNutricionistas()">
-  <p class="link-nutris">Ver más nutricionistas</p>
-</div>
+  <div (click)="irNutricionistas()">
+    <p class="link-nutris">Ver más nutricionistas</p>
+  </div>
 </ion-content>
 <!-- Alertas -->
 <!-- Alerta para cierre de sesión -->
- <ion-alert
- trigger="present-alert"
- header="¿Está seguro que desea cerrar sesión?"
- [buttons]="confirmButtons"
- cssClass="cerrar-sesion-alerta"
- ></ion-alert>
+<ion-alert trigger="present-alert" header="¿Está seguro que desea cerrar sesión?" [buttons]="confirmButtons"
+  cssClass="cerrar-sesion-alerta"></ion-alert>
 <app-nav-bar></app-nav-bar>
+
+<!-- Modal: Agendar Cita con Nutricionista -->
+<ion-modal [isOpen]="mostrarModal" (didDismiss)="cerrarModal()">
+  <ng-template>
+    <!-- Header con nombre -->
+    <ion-header class="ion-padding-top">
+      <ion-toolbar class="toolbar">
+        <ion-title>Agendar con {{ nutricionistaSeleccionado?.primer_nombre }} {{ nutricionistaSeleccionado?.apellido_p
+          }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrarModal()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <!-- Contenido Modal -->
+    <ion-content class="ion-padding">
+      <ion-card *ngIf="disponibilidades.length > 0; else sinDisponibilidades">
+        <ion-card-header>
+          <ion-card-title>Disponibilidad</ion-card-title>
+          <p class="nota_disponibilidad">Solo puedes reservar una hora por día</p>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <!-- Día disponible -->
+            <div *ngFor="let fecha of fechasAgrupadas">
+              <ion-item-divider class="separador-fecha">
+                <div class="texto-fecha">{{ fecha.fecha | date:'fullDate' }}</div>
+              </ion-item-divider>
+              <ion-item *ngFor="let bloque of fecha.bloques">
+                <ion-label>
+                  {{ bloque.hora }} -
+                  <span [ngStyle]="{
+                    color: bloque.esTuReserva ? '#f1c40f' : (bloque.estado === 'Reservada' ? 'red' : 'green'),
+                    'font-weight': bloque.esTuReserva ? 'bold' : 'normal'
+                  }">
+                    {{ bloque.esTuReserva ? 'Tu reserva' : bloque.estado }}
+                  </span>
+                </ion-label>
+                <ion-button size="small" [disabled]="bloque.estado === 'Reservada' || !bloque.habilitada"
+                  (click)="mostrarFormularioCita(bloque)">
+                  Reservar
+                </ion-button>
+              </ion-item>
+            </div>
+          </ion-list>
+        </ion-card-content>
+        </ion-card>
+      <ng-template #sinDisponibilidades>
+        <ion-text color="medium">No hay horarios disponibles actualmente.</ion-text>
+      </ng-template>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- Modal para reservar hora -->
+<ion-modal [isOpen]="mostrarModalFormulario" (didDismiss)="cancelarFormulario()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Información de la cita</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cancelarFormulario()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-item>
+        <ion-label position="stacked">Motivo de consulta</ion-label>
+        <ion-input [(ngModel)]="mdl_motivo" placeholder="Ej: Control mensual"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Hecho relevante</ion-label>
+        <ion-input [(ngModel)]="mdl_hecho" placeholder="Ej: Sin antecedentes relevantes"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" color="success" (click)="confirmarAgendarCita()">Confirmar reserva</ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>
