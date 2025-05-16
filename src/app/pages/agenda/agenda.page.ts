@@ -28,7 +28,7 @@ export class AgendaPage implements OnInit {
 async obtenerCitas() {
   try {
     const respuesta = await lastValueFrom(this.api.obtenerCitasPaciente(this.id_paciente));
-    const todas = (respuesta.citas || []).filter((cita: any) => cita.estado !== 'Cancelada');
+    const todas = (respuesta.citas || []);
 
     this.citasProximas = [];
     this.citasPasadas = [];
@@ -68,4 +68,22 @@ async obtenerCitas() {
     const hora = fechaHora.split('T')[1]?.substring(0, 5); // 'HH:mm'
     return hora ?? '--:--';
   }
+
+  getEstadoClase(estado: string, esHistorial: boolean = false): string {
+  const base = esHistorial ? 'cita historial ' : 'cita ';
+
+  switch (estado) {
+    case 'Reservada':
+      return base + 'reservada';
+    case 'Cancelada':
+      return base + 'cancelada';
+    case 'Cancelada por Nutricionista':
+    case 'Cancelada por Paciente':
+      return base + 'cancelada-burdeo';
+    case 'Completada':
+      return base + 'completada';
+    default:
+      return base + 'otro';
+  }
+}
 }

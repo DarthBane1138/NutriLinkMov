@@ -1,0 +1,45 @@
+.cita {
+    border-left: 6px solid transparent;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.cita.reservada {
+    border-left-color: #2ecc71; // verde
+    background-color: #2ecc7070;
+}
+
+.cita.cancelada {
+    border-left-color: #ff1900; // rojo
+    background-color: #ff190080;
+}
+
+.cita.cancelada-burdeo {
+    border-left-color: #800020; // burdeo
+    background-color: #80002070;
+}
+
+.cita.completada {
+    border-left-color: #3498db; // celeste
+}
+
+.historial.reservada {
+    border-left-color: #a9dfbf; // verde pastel
+    background-color: #f8fdf9;
+}
+
+.historial.cancelada {
+    border-left-color: #f5b7b1; // rojo pastel
+    background-color: #fdf6f6;
+}
+
+.historial.cancelada-burdeo {
+    border-left-color: #d7b1b9; // burdeo pastel
+    background-color: #fef9f9;
+}
+
+.historial.completada {
+    border-left-color: #aed6f1; // celeste pastel
+    background-color: #f7fbff;
+}
