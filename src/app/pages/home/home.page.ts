@@ -6,7 +6,7 @@ import { DblocalService } from 'src/app/services/dblocal.service';
 import { LOCALE_ID } from '@angular/core';
 import localeEs from '@angular/common/locales/es';
 import { registerLocaleData } from '@angular/common';
-import Swal from 'sweetalert2';
+import { AlertController} from '@ionic/angular';
 
 registerLocaleData(localeEs);
 
@@ -57,7 +57,12 @@ citasDelPaciente: any[] = [];
     }
   ]
 
-  constructor(private router:Router, private api: ApiService, private db:DblocalService) {}
+  constructor(
+    private router:Router,
+    private api: ApiService,
+    private db:DblocalService,
+    private alertController: AlertController
+  ) {}
 
   async ngOnInit() {
     let data = await this.db.obtenerSesion();
@@ -68,8 +73,9 @@ citasDelPaciente: any[] = [];
     console.log("PLF correo:", this.correo);
     console.log("PLF contrasena:", this.contrasena);
     console.log("PLF id_paciente:", this.id_paciente);
-  
+
     await this.infoUsuario();
+    await this.verificarCancelacionesPendientes();
   }
   
   async infoUsuario() {
@@ -368,5 +374,69 @@ confirmarAgendarCita() {
       this.cancelarFormulario();
     }
   });
+}
+
+async verificarCancelacionesPendientes() {
+  try {
+    const respuesta = await lastValueFrom(this.api.obtenerCitasPaciente(this.id_paciente));
+    const citas = respuesta.citas || [];
+
+    for (const cita of citas) {
+      if (cita.estado === 'Cancelada por Nutricionista') {
+        const fechaObj = new Date(cita.fecha_hora);
+        const fecha = fechaObj.toLocaleDateString('es-CL', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        const hora = cita.fecha_hora.split('T')[1]?.substring(0, 5) || '--:--';
+        const nombreNutricionista = cita.nutricionista_nombre || 'el nutricionista';
+
+        // Mostrar alerta y capturar respuesta
+        const alerta = await this.alertController.create({
+          header: 'Cita cancelada',
+          message: `${nombreNutricionista} ha cancelado su cita el ${fecha} a las ${hora}.`,
+          buttons: [
+            {
+              text: 'Ver más tarde',
+              role: 'cancel',
+            },
+            {
+              text: 'Confirmar',
+              role: 'confirm'
+            }
+          ]
+        });
+
+        await alerta.present();
+        const result = await alerta.onDidDismiss();
+
+        if (result.role === 'confirm') {
+          try {
+            await lastValueFrom(this.api.confirmarNotificacionCancelacion(
+              this.id_paciente,
+              cita.id_nutricionista,
+              cita.fecha_hora,
+              'paciente'
+            ));
+
+            const confirmacion = await this.alertController.create({
+              header: 'Notificación confirmada',
+              message: 'El estado de la cita ha sido actualizado.',
+              buttons: ['OK']
+            });
+
+            await confirmacion.present();
+            await confirmacion.onDidDismiss(); // ✅ Espera a que se cierre esta también
+          } catch (error) {
+            console.error('Error al confirmar cancelación:', error);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error al verificar cancelaciones pendientes:', error);
+  }
 }
 }
