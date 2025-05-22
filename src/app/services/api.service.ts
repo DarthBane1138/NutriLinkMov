@@ -136,4 +136,9 @@ export class ApiService {
     return this.http.get(`${this.ruta}/api_nutrilink/agenda/citas_paciente/${id_paciente}`);
   }
 
+  cancelarCitaPaciente(id_paciente: number, id_nutricionista: number, fecha_hora: string): Observable<any> {
+    const body = {id_paciente, id_nutricionista, fecha_hora};
+    return this.http.patch(`${this.ruta}/api_nutrilink/agenda/cancelar_cita_paciente`, body);
+  }
+
 }

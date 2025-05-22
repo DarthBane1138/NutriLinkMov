@@ -21,14 +21,20 @@
             <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
             <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
             <p><strong>Hecho relevante:</strong> {{ cita.hecho_relevante }}</p>
-
+  
             <p *ngIf="cita.compromiso_acordado != null && cita.compromiso_acordado !== ''">
               <strong>Compromiso acordado:</strong> {{ cita.compromiso_acordado }}
             </p>
-
+  
             <p *ngIf="cita.adherencia_medicamentos != null && cita.adherencia_medicamentos !== ''">
               <strong>Adherencia a medicamentos:</strong> {{ cita.adherencia_medicamentos }}
             </p>
+  
+            <!-- Botón para cancelar -->
+            <ion-button *ngIf="cita.estado === 'Reservada'" color="danger" size="small" expand="block"
+              (click)="confirmarCancelacion(cita)">
+              Cancelar cita
+            </ion-button>
           </ion-label>
         </ion-item>
       </ion-list>

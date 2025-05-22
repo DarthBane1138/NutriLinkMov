@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { DblocalService } from 'src/app/services/dblocal.service';
 import { lastValueFrom } from 'rxjs';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-agenda',
@@ -15,7 +16,12 @@ export class AgendaPage implements OnInit {
   citasProximas: any[] = [];
   citasPasadas: any[] = [];
 
-  constructor(private api: ApiService, private db: DblocalService) {}
+  constructor(
+    private api: ApiService,
+    private db: DblocalService,
+    private alertController: AlertController,
+    private toastController: ToastController
+  ) {}
 
   async ngOnInit() {
     const datos = await this.db.obtenerSesion();
@@ -85,5 +91,52 @@ async obtenerCitas() {
     default:
       return base + 'otro';
   }
+}
+
+async confirmarCancelacion(cita: any) {
+  const alert = await this.alertController.create({
+    header: 'Confirmar cancelación',
+    message: '¿Está seguro que desea cancelar su cita?',
+    buttons: [
+      {
+        text: 'No',
+        role: 'cancel'
+      },
+      {
+        text: 'Sí',
+        handler: async () => {
+          try {
+            const res = await lastValueFrom(this.api.cancelarCitaPaciente(
+              this.id_paciente,
+              cita.id_nutricionista,
+              cita.fecha_hora
+            ));
+
+            await this.presentToast(res.mensaje || 'Cita cancelada');
+            this.obtenerCitas(); // Recarga citas
+
+          } catch (error) {
+            console.error('Error al cancelar cita:', error);
+            let mensaje = 'Error al cancelar cita';
+            if (error && typeof error === 'object' && 'error' in error && (error as any).error?.mensaje) {
+              mensaje = (error as any).error.mensaje;
+            }
+            this.presentToast(mensaje);
+          }
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
+
+async presentToast(message: string) {
+  const toast = await this.toastController.create({
+    message,
+    duration: 2500,
+    color: 'dark'
+  });
+  toast.present();
 }
 }
