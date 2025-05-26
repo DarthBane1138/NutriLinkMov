@@ -1,0 +1,12 @@
+.chart-container {
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  padding-bottom: 16px;
+}
+
+canvas {
+  width: 100% !important;
+  max-width: 100%;
+  display: block;
+}

@@ -5,11 +5,45 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">estadisticas</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <h2>Gráfico Resumen</h2>
+  <div class="chart-container">
+    <canvas id="barChart"></canvas>
+  </div>
+
+  <h2>IMC</h2>
+  <div class="chart-container">
+    <canvas id="lineChartIMC"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="barChartIMC"></canvas>
+  </div>
+
+  <h2>Peso (kg)</h2>
+  <div class="chart-container">
+    <canvas id="lineChartPeso"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="barChartPeso"></canvas>
+  </div>
+
+  <h2>Talla (cm)</h2>
+  <div class="chart-container">
+    <canvas id="lineChartTalla"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="barChartTalla"></canvas>
+  </div>
+
+  <h2>% Grasa</h2>
+  <div class="chart-container">
+    <canvas id="lineChartGrasa"></canvas>
+  </div>
+  <div class="chart-container">
+    <canvas id="barChartGrasa"></canvas>
+  </div>
+
 </ion-content>
+
 <app-nav-bar></app-nav-bar>
