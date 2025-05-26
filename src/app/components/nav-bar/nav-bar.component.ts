@@ -14,13 +14,14 @@ export class NavBarComponent  implements OnInit {
   ngOnInit() {}
 
   irHome() {
-    this.router.navigate(['home'], { replaceUrl: true});
+    this.router.navigate(['home'], { replaceUrl: true });
   }
   irEstadisticas() {
-    this.router.navigate(['estadisticas'], { replaceUrl: true});
+    const timestamp = new Date().getTime();
+    this.router.navigate(['/estadisticas', { t: timestamp }]);
   }
   irPerfil() {
-    this.router.navigate(['perfil'], { replaceUrl: true});
+    this.router.navigate(['perfil'], { replaceUrl: true });
   }
 
 }

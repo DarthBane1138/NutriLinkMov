@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { ViewDidEnter } from '@ionic/angular';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ApiService } from 'src/app/services/api.service';
+import { DblocalService } from 'src/app/services/dblocal.service';
+import { lastValueFrom } from 'rxjs';
 
 Chart.register(...registerables, ChartDataLabels);
-Chart.register(...registerables);
 
 @Component({
   selector: 'app-estadisticas',
@@ -11,27 +14,79 @@ Chart.register(...registerables);
   styleUrls: ['./estadisticas.page.scss'],
   standalone: false
 })
-export class EstadisticasPage implements OnInit {
+export class EstadisticasPage implements OnInit, ViewDidEnter {
 
-  constructor() {}
+  id_paciente: number = 0;
 
-  ngOnInit() {
-    // 🔸 Simulamos los datos, luego los reemplazaremos con los reales
-    const fechas = ['10-04-2025', '20-04-2025', '30-04-2025'];
-    const pesos = [70, 72, 71];
-    const tallas = [170, 170, 170];
-    const imc = [24.2, 24.9, 24.6];
-    const grasas = [18, 19, 18.5];
+  constructor(private api: ApiService, private db: DblocalService) {}
 
-    // 🔹 Gráficos globales (evolución conjunta)
-    this.generarLineChartGlobal(fechas, imc, pesos, tallas, grasas);
-    this.generarBarChartGlobal(fechas, imc, pesos, tallas, grasas);
+  async ngOnInit() {
+    const sesion = await this.db.obtenerSesion();
+    this.id_paciente = sesion.id_paciente;
+  }
 
-    // 🔹 Gráficos individuales
-    this.generarGraficosIndividuales('IMC', fechas, imc);
-    this.generarGraficosIndividuales('Peso', fechas, pesos);
-    this.generarGraficosIndividuales('Talla', fechas, tallas);
-    this.generarGraficosIndividuales('Grasa', fechas, grasas);
+  async ionViewDidEnter() {
+    this.limpiarGraficos();
+
+    try {
+      const response: any = await lastValueFrom(this.api.obtenerAntropometria(this.id_paciente));
+      if (response.status !== 'ok') return;
+
+      const fechas: string[] = [];
+      const pesos: number[] = [];
+      const tallas: number[] = [];
+      const imcs: number[] = [];
+      const grasas: number[] = [];
+
+      for (const dato of response.datos) {
+        if (!dato.fecha) continue;
+
+        const partes = dato.fecha.slice(0, 10).split('-');
+        const fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`;
+
+        fechas.push(fechaFormateada);
+        pesos.push(dato.peso_kg || 0);
+        tallas.push(dato.talla_cm || 0);
+
+        const fechaAPI = `${partes[0]}-${partes[1]}-${partes[2]}`;
+        const calcResp: any = await lastValueFrom(
+          this.api.obtenerCalculosAntropometricos(this.id_paciente, fechaAPI)
+        );
+
+        if (calcResp.status === 'success') {
+          imcs.push(calcResp.data.imc || 0);
+          grasas.push(calcResp.data.porc_grasa || 0);
+        } else {
+          imcs.push(0);
+          grasas.push(0);
+        }
+      }
+
+      // Renderizar gráficos
+      this.generarLineChartGlobal(fechas, imcs, pesos, tallas, grasas);
+      this.generarBarChartGlobal(fechas, imcs, pesos, tallas, grasas);
+      this.generarGraficosIndividuales('IMC', fechas, imcs);
+      this.generarGraficosIndividuales('Peso', fechas, pesos);
+      this.generarGraficosIndividuales('Talla', fechas, tallas);
+      this.generarGraficosIndividuales('Grasa', fechas, grasas);
+
+    } catch (error) {
+      console.error('Error al cargar datos para estadísticas:', error);
+    }
+  }
+
+  limpiarGraficos() {
+    const ids = [
+      'lineChart', 'barChart',
+      'lineChartIMC', 'barChartIMC',
+      'lineChartPeso', 'barChartPeso',
+      'lineChartTalla', 'barChartTalla',
+      'lineChartGrasa', 'barChartGrasa'
+    ];
+    ids.forEach(id => {
+      const chart = Chart.getChart(id);
+      if (chart) chart.destroy();
+    });
   }
 
   generarLineChartGlobal(fechas: string[], imc: number[], peso: number[], talla: number[], grasa: number[]) {
@@ -50,7 +105,8 @@ export class EstadisticasPage implements OnInit {
         responsive: true,
         plugins: {
           legend: { position: 'top' },
-          title: { display: true, text: 'Evolución Antropométrica' }
+          title: { display: true, text: 'Evolución Antropométrica' },
+          datalabels: { display: false }
         }
       }
     });
@@ -72,7 +128,8 @@ export class EstadisticasPage implements OnInit {
         responsive: true,
         plugins: {
           legend: { position: 'top' },
-          title: { display: true, text: 'Comparación por Visita' }
+          title: { display: true, text: 'Comparación por Visita' },
+          datalabels: { display: false }
         }
       }
     });
@@ -98,9 +155,7 @@ export class EstadisticasPage implements OnInit {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: {
-            display: false
-          },
+          title: { display: false },
           datalabels: {
             anchor: 'start',
             align: 'bottom',
@@ -129,12 +184,20 @@ export class EstadisticasPage implements OnInit {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: {
-            display: false,
-            text: `${etiqueta} - Comparación por Visita`
+          title: { display: false },
+          datalabels: {
+            anchor: 'center',
+            align: 'center',
+            offset: 2,
+            color: '#333',
+            font: {
+              weight: 'bold'
+            },
+            formatter: (value: number) => value.toString()
           }
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     });
   }
 }
