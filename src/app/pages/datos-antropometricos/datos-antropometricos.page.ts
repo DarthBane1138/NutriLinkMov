@@ -53,9 +53,10 @@ export class DatosAntropometricosPage implements OnInit {
             const partes = dato.fecha.slice(0, 10).split('-');
             fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`;
           }
-  
+
           this.registrosAntropometria.push({
             fecha: fechaFormateada,
+            fechaNatural: this.formatearFechaNatural(fechaFormateada),
             peso: dato.peso_kg,
             talla: dato.talla_cm,
             cintura: dato.circunferencia_cintura_cm,
@@ -66,7 +67,7 @@ export class DatosAntropometricosPage implements OnInit {
             subescapular: dato.pliegue_subescapular_mm
           });
         }
-  
+
         // Opcional: mostrar el primero por defecto
         if (this.registrosAntropometria.length > 0) {
           this.mostrarRegistro(this.registrosAntropometria[0]);
@@ -149,5 +150,21 @@ export class DatosAntropometricosPage implements OnInit {
   mostrarAlerta(arg0: string, mensaje: any) {
     throw new Error('Method not implemented.');
   }
+
+  formatearFechaNatural(fechaStr: string): string {
+  const partes = fechaStr.split('-');
+  if (partes.length !== 3) return fechaStr;
+
+  const fecha = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
+  const opciones: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  };
+
+  const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+  return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+}
 
 }

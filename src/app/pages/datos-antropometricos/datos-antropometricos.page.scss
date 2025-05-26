@@ -1,0 +1,38 @@
+ion-note {
+  font-size: 1.1rem;        /* Tamaño del texto */
+  font-weight: bold;        /* Negrita */
+  color: #2c3e50;           /* Color de texto (puedes usar otro código hexadecimal o variable) */
+  background-color: #f0f0f0; /* Fondo suave */
+  padding: 4px 8px;         /* Espaciado interno */
+  border-radius: 8px;       /* Bordes redondeados */
+  min-width: 60px;          /* Ancho mínimo para alinear */
+  text-align: center;       /* Centrar texto */
+  display: inline-block;    /* Asegura que se respete el tamaño */
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.unidad {
+  font-size: 1.1rem;        /* Tamaño del texto */
+  font-weight: bold;        /* Negrita */
+  color: #2c3e50;           /* Color de texto (puedes usar otro código hexadecimal o variable) */
+  background-color: #ffffff;
+  padding: 4px 8px;         /* Espaciado interno */
+  border-radius: 8px;       /* Bordes redondeados */
+  min-width: 60px;          /* Ancho mínimo para alinear */
+  text-align: center;       /* Centrar texto */
+  display: inline-block;    /* Asegura que se respete el tamaño */
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+ion-button {
+    --background: #005dbb;
+    text-transform: none;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    --padding-start: 16px;
+}

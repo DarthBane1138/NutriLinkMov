@@ -1,7 +1,7 @@
 <ion-header class="ion-padding-top">
   <ion-toolbar class="toolbar">
     <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
-    <ion-title>datos-antropometricos</ion-title>
+    <ion-title>Datos Antropométricos</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -9,47 +9,39 @@
 <!-- Lista de fechas -->
 <ion-card>
   <ion-card-header>
-    <ion-card-title>Selecciona una fecha</ion-card-title>
+    <ion-card-title>Selecciona una fecha de consulta</ion-card-title>
   </ion-card-header>
-  <ion-card-content>
-    <ion-button 
-      *ngFor="let reg of registrosAntropometria" 
-      expand="block" 
+  <ion-card-content class="boton-fecha">
+    <ion-button class="fecha-btn" *ngFor="let reg of registrosAntropometria" expand="block"
       (click)="mostrarRegistro(reg)">
-      {{ reg.fecha }}
+      {{ reg.fechaNatural }}
     </ion-button>
   </ion-card-content>
-</ion-card>
+  </ion-card>
 
 <!-- Tarjeta con los datos de la fecha seleccionada -->
 <ion-card *ngIf="fecha">
   <ion-card-header>
     <ion-card-title>Datos Antropométricos</ion-card-title>
-    <ion-card-subtitle>Paciente ID: {{ id_paciente }} - Fecha: {{ fecha }}</ion-card-subtitle>
+    <ion-card-subtitle>
+  Paciente ID: {{ id_paciente }} - Fecha: {{ formatearFechaNatural(fecha) }}
+</ion-card-subtitle>
   </ion-card-header>
   <ion-card-content>
-    <ion-item><ion-label>Peso (kg):</ion-label><ion-note slot="end">{{ peso }}</ion-note></ion-item>
-    <ion-item><ion-label>Talla (cm):</ion-label><ion-note slot="end">{{ talla }}</ion-note></ion-item>
-    <ion-item><ion-label>Cintura (cm):</ion-label><ion-note slot="end">{{ cintura }}</ion-note></ion-item>
-    <ion-item><ion-label>Brazo (mm):</ion-label><ion-note slot="end">{{ brazo }}</ion-note></ion-item>
-    <ion-item><ion-label>Pliegue Tricipital (mm):</ion-label><ion-note slot="end">{{ tricipital }}</ion-note></ion-item>
-    <ion-item><ion-label>Pliegue Bicipital (mm):</ion-label><ion-note slot="end">{{ bicipital }}</ion-note></ion-item>
-    <ion-item><ion-label>Pliegue Suprailiaco (mm):</ion-label><ion-note slot="end">{{ suprailiaco }}</ion-note></ion-item>
-    <ion-item><ion-label>Pliegue Subescapular (mm):</ion-label><ion-note slot="end">{{ subescapular }}</ion-note></ion-item>
+    <ion-item><ion-label>Peso:</ion-label><ion-note>{{ peso }}</ion-note><ion-note slot="end" class="unidad"> Kg </ion-note></ion-item>
+    <ion-item><ion-label>Talla:</ion-label><ion-note>{{ talla }}</ion-note><ion-note slot="end" class="unidad"> cm </ion-note></ion-item>
+    <ion-item><ion-label>Cintura</ion-label><ion-note>{{ cintura }}</ion-note><ion-note slot="end" class="unidad"> cm </ion-note></ion-item>
   </ion-card-content>
 </ion-card>
 
 <!-- Tarjeta con los cálculos antropométricos -->
 <ion-card *ngIf="calculosAntropometricos">
   <ion-card-header>
-    <ion-card-title>Cálculos Antropométricos</ion-card-title>
+    <ion-card-title>Datos relevantes</ion-card-title>
   </ion-card-header>
   <ion-card-content>
     <ion-item><ion-label>IMC:</ion-label><ion-note slot="end">{{ calculosAntropometricos.imc }}</ion-note></ion-item>
     <ion-item><ion-label>Índice Cintura/Talla:</ion-label><ion-note slot="end">{{ calculosAntropometricos.indice_cintura_talla }}</ion-note></ion-item>
-    <ion-item><ion-label>Perímetro Muscular Braquial:</ion-label><ion-note slot="end">{{ calculosAntropometricos.perimetro_muscular_braquial }}</ion-note></ion-item>
-    <ion-item><ion-label>Área Muscular Braquial:</ion-label><ion-note slot="end">{{ calculosAntropometricos.area_muscular_braquial }}</ion-note></ion-item>
-    <ion-item><ion-label>Área Grasa Braquial:</ion-label><ion-note slot="end">{{ calculosAntropometricos.area_grasa_braquial }}</ion-note></ion-item>
     <ion-item><ion-label>% Grasa:</ion-label><ion-note slot="end">{{ calculosAntropometricos.porc_grasa }}</ion-note></ion-item>
   </ion-card-content>
 </ion-card>
