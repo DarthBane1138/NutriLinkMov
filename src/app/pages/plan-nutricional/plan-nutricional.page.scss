@@ -1,0 +1,21 @@
+.custom-divider {
+  margin: 1rem 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+h3 {
+  font-size: 1.05rem;         // 🔸 Más discreto que 1.2rem
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-weight: 600;
+  border-bottom: 2px solid #06af00;  // 🔹 Línea inferior tipo marcador
+  padding-bottom: 4px;
+}
+
+.custom-divider {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  border-top: 1px solid #ccc;
+}

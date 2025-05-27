@@ -157,4 +157,17 @@ export class ApiService {
     return this.http.patch(`${this.ruta}/api_nutrilink/agenda/confirmar_notificacion_cancelacion`, body);
   }
 
+  obtenerFechasMinutas(id_paciente: number): Observable<any> {
+    const params = new HttpParams().set('pacienteId', id_paciente.toString());
+    return this.http.get(`${this.ruta}/api_nutrilink/minuta/minutas_por_fecha/`, { params });
+  }
+
+  obtenerMinutaPorPaciente(pacienteId: number, idMinuta: number): Observable<any> {
+    const params = new HttpParams()
+      .set('pacienteId', pacienteId.toString())
+      .set('idMinuta', idMinuta.toString());
+
+    return this.http.get(`${this.ruta}/api_nutrilink/minuta/obtener_minuta`, { params });
+  }
+
 }

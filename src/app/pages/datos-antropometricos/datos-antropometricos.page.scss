@@ -35,3 +35,14 @@ ion-button {
     font-weight: 500;
     margin-bottom: 8px;
 }
+
+.ver-mas-fechas {
+  --background: transparent;
+  --color: #1976d2; /* Azul estilo Material Design */
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+}

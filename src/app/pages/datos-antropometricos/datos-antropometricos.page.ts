@@ -27,6 +27,7 @@ export class DatosAntropometricosPage implements OnInit {
   mensajeErrorCalculos: string = '';
   diagnosticosAntropometricos: string[] = [];
   mensajeErrorDiagnosticos: string = '';
+  mostrarTodasFechas: boolean = false;  // NUEVO
 
   constructor(private api: ApiService, private db: DblocalService) { }
 
@@ -152,19 +153,24 @@ export class DatosAntropometricosPage implements OnInit {
   }
 
   formatearFechaNatural(fechaStr: string): string {
-  const partes = fechaStr.split('-');
-  if (partes.length !== 3) return fechaStr;
+    const partes = fechaStr.split('-');
+    if (partes.length !== 3) return fechaStr;
 
-  const fecha = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
-  const opciones: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  };
+    // Creamos el Date de forma segura y explícita en hora local
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1; // Mes va de 0 a 11
+    const anio = parseInt(partes[2], 10);
+    const fecha = new Date(anio, mes, dia);
 
-  const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
-  return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
-}
+    const opciones: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    };
+
+    const fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+    return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+  }
 
 }

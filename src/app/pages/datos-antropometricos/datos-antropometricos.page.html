@@ -7,17 +7,34 @@
 
 <ion-content class="ion-padding">
 <!-- Lista de fechas -->
-<ion-card>
+<ion-card *ngIf="registrosAntropometria.length > 0">
   <ion-card-header>
     <ion-card-title>Selecciona una fecha de consulta</ion-card-title>
   </ion-card-header>
   <ion-card-content class="boton-fecha">
-    <ion-button class="fecha-btn" *ngFor="let reg of registrosAntropometria" expand="block"
-      (click)="mostrarRegistro(reg)">
-      {{ reg.fechaNatural }}
+
+    <!-- Mostrar siempre la última fecha -->
+    <ion-button class="fecha-btn" expand="block" color="primary"
+      (click)="mostrarRegistro(registrosAntropometria[0])">
+      {{ registrosAntropometria[0].fechaNatural }}
     </ion-button>
+
+        <!-- Botón para desplegar/ocultar fechas anteriores -->
+    <ion-button fill="clear" size="small" class="ver-mas-fechas" (click)="mostrarTodasFechas = !mostrarTodasFechas">
+      {{ mostrarTodasFechas ? 'OCULTAR FECHAS' : 'VER MÁS FECHAS' }}
+    </ion-button>
+
+    <!-- Fechas colapsadas -->
+    <div *ngIf="mostrarTodasFechas">
+      <ion-button class="fecha-btn" expand="block"
+        *ngFor="let reg of registrosAntropometria.slice(1)"
+        (click)="mostrarRegistro(reg)">
+        {{ reg.fechaNatural }}
+      </ion-button>
+    </div>
+
   </ion-card-content>
-  </ion-card>
+</ion-card>
 
 <!-- Tarjeta con los datos de la fecha seleccionada -->
 <ion-card *ngIf="fecha">

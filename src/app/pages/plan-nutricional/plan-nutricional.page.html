@@ -1,15 +1,75 @@
 <ion-header class="ion-padding-top">
   <ion-toolbar class="toolbar">
     <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
-    <ion-title>plan-nutricional</ion-title>
+    <ion-title>Planes Nutricionales</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">plan-nutricional</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+<ion-card *ngIf="fechasMinutas.length > 0">
+  <ion-card-header>
+    <ion-card-title>Minutas disponibles</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <!-- Última fecha (siempre visible) -->
+      <ion-item button (click)="seleccionarFecha(fechasMinutas[0].fecha_minuta, fechasMinutas[0].id_minuta)">
+        <ion-label>
+          {{ formatearFechaLarga(fechasMinutas[0].fecha_minuta) }}
+        </ion-label>
+        <ion-badge *ngIf="fechasMinutas[0].fecha_minuta === fechaSeleccionada" color="success">Seleccionada</ion-badge>
+      </ion-item>
+
+      <!-- Otras fechas (colapsables) -->
+      <div *ngIf="mostrarTodasFechas">
+        <ion-item *ngFor="let minuta of fechasMinutas.slice(1)" button (click)="seleccionarFecha(minuta.fecha_minuta, minuta.id_minuta)">
+          <ion-label>
+            {{ formatearFechaLarga(minuta.fecha_minuta) }}
+          </ion-label>
+          <ion-badge *ngIf="minuta.fecha_minuta === fechaSeleccionada" color="success">Seleccionada</ion-badge>
+        </ion-item>
+      </div>
+    </ion-list>
+
+    <ion-button expand="block" fill="clear" (click)="mostrarTodasFechas = !mostrarTodasFechas">
+      {{ mostrarTodasFechas ? 'Ocultar fechas anteriores' : 'Ver más fechas' }}
+    </ion-button>
+  </ion-card-content>
+</ion-card>
+      <ion-card *ngIf="minutaSeleccionada">
+        <ion-card-header>
+          <ion-card-title>Detalle de Minuta ({{ fechaSeleccionada }})</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngFor="let tiempo of minutaSeleccionada.tiempos_de_comida">
+            <h3>{{ tiempo.tiempo_comida }} ({{ tiempo.hora_sugerida }})</h3>
+      
+            <ion-accordion-group expand="none">
+              <ion-accordion *ngFor="let grupo of tiempo.grupos" value="{{ grupo.grupo_descripcion }}">
+                <ion-item slot="header">
+                  <ion-label>{{ grupo.grupo_descripcion }}</ion-label>
+                </ion-item>
+                <div class="ion-padding" slot="content">
+                  <ion-list>
+                    <ion-item *ngFor="let opcion of grupo.opciones">
+                      <ion-label>
+                        {{ opcion.alimento }} - {{ opcion.cantidad }} {{ opcion.medida }}
+                      </ion-label>
+                    </ion-item>
+                  </ion-list>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
+      
+            <hr class="custom-divider" />
+          </div>
+        </ion-card-content>
+      </ion-card>
+      
+      <ion-card *ngIf="mensaje && !minutaSeleccionada">
+        <ion-card-content>{{ mensaje }}</ion-card-content>
+      </ion-card>
+
 </ion-content>
 <app-nav-bar></app-nav-bar>
