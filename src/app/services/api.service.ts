@@ -128,7 +128,7 @@ export class ApiService {
       hecho_relevante
     };
 
-    return this.http.post(`${this.ruta}/api_nutrilink/agenda/solicitar_cita`, body);
+    return this.http.post(`${this.ruta}/api_nutrilink/agenda/paciente_solicitar_cita`, body);
   }
 
   obtenerCitasPaciente(id_paciente: number): Observable<any> {

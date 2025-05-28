@@ -224,7 +224,7 @@ abrirModal(nutricionista: any) {
   // Primero obtener las citas del paciente
   this.api.obtenerCitasPaciente(this.datosUsuarios.id_paciente).subscribe({
     next: (citasPaciente) => {
-      this.citasDelPaciente = (citasPaciente.citas || []).filter((cita: any) => cita.estado === 'Reservada');
+      this.citasDelPaciente = (citasPaciente.citas || []).filter((cita: any) => ['Reservada', 'Solicitada'].includes(cita.estado));
       console.log('PLF Citas del paciente:', this.citasDelPaciente);
 
       // Luego obtener disponibilidades
@@ -296,7 +296,7 @@ agruparPorFecha() {
 
     const pacienteTieneCitaEseDia = this.citasDelPaciente.some((cita: any) => {
       const fechaCita = cita.fecha_hora?.split('T')[0];
-      return fechaCita === fecha && cita.estado === 'Reservada';
+      return fechaCita === fecha && (cita.estado === 'Reservada' || cita.estado === 'Solicitada');
     });
 
     const bloquesProcesados = bloquesCasteados.map(b => {
@@ -312,7 +312,9 @@ agruparPorFecha() {
       return {
         ...b,
         habilitada: b.estado === 'Disponible' && !pacienteTieneCitaEseDia,
-        esTuReserva: citaPaciente !== undefined
+        esTuReserva: citaPaciente !== undefined &&
+          (citaPaciente.estado === 'Reservada' || citaPaciente.estado === 'Solicitada'),
+        estado: citaPaciente?.estado || b.estado
       };
     });
 

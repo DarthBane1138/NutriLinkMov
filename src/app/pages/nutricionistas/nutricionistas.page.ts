@@ -73,7 +73,9 @@ export class NutricionistasPage implements OnInit {
 
     this.api.obtenerCitasPaciente(this.datosUsuarios.id_paciente).subscribe({
       next: (citasPaciente) => {
-        this.citasDelPaciente = (citasPaciente.citas || []).filter((c: any) => c.estado === 'Reservada');
+        this.citasDelPaciente = (citasPaciente.citas || []).filter((c: any) =>
+          c.estado === 'Reservada' || c.estado === 'Solicitada'
+        );
 
         this.api.obtenerDisponibilidadNutricionista(nutricionista.id_nutricionista).subscribe({
           next: (response) => {
@@ -103,36 +105,48 @@ export class NutricionistasPage implements OnInit {
     this.fechasAgrupadas = [];
   }
 
-  agruparPorFecha() {
-    const agrupado: { [fecha: string]: any[] } = {};
-    for (const disp of this.disponibilidades) {
-      const fechaISO = new Date(disp.fecha).toISOString().split('T')[0];
-      if (!agrupado[fechaISO]) agrupado[fechaISO] = [];
-      agrupado[fechaISO].push(disp);
-    }
+agruparPorFecha() {
+  const agrupado: { [fecha: string]: any[] } = {};
 
-    this.fechasAgrupadas = Object.entries(agrupado).map(([fecha, bloques]) => {
-      const bloquesCasteados = bloques as any[];
-      const pacienteTieneCitaEseDia = this.citasDelPaciente.some((cita: any) => cita.fecha_hora?.split('T')[0] === fecha);
+  for (const disp of this.disponibilidades) {
+    const fechaISO = new Date(disp.fecha).toISOString().split('T')[0];
+    if (!agrupado[fechaISO]) agrupado[fechaISO] = [];
+    agrupado[fechaISO].push(disp);
+  }
 
-      const bloquesProcesados = bloquesCasteados.map(b => {
-        const bloqueFecha = b.fecha.split('T')[0];
-        const bloqueHora = b.hora;
-        const citaPaciente = this.citasDelPaciente.find((cita: any) => {
-          const fechaCita = cita.fecha_hora?.split('T')[0];
-          const horaCita = cita.fecha_hora?.split('T')[1]?.substring(0, 5);
-          return fechaCita === bloqueFecha && horaCita === bloqueHora.substring(0, 5);
-        });
-        return {
-          ...b,
-          habilitada: b.estado === 'Disponible' && !pacienteTieneCitaEseDia,
-          esTuReserva: citaPaciente !== undefined
-        };
+  this.fechasAgrupadas = Object.entries(agrupado).map(([fecha, bloques]) => {
+    const bloquesCasteados = bloques as any[];
+
+    const pacienteTieneCitaEseDia = this.citasDelPaciente.some((cita: any) => {
+      const fechaCita = cita.fecha_hora?.split('T')[0];
+      return fechaCita === fecha && (cita.estado === 'Reservada' || cita.estado === 'Solicitada');
+    });
+
+    const bloquesProcesados = bloquesCasteados.map(b => {
+      const bloqueFecha = b.fecha.split('T')[0];
+      const bloqueHora = b.hora;
+
+      const citaPaciente = this.citasDelPaciente.find((cita: any) => {
+        const fechaCita = cita.fecha_hora?.split('T')[0];
+        const horaCita = cita.fecha_hora?.split('T')[1]?.substring(0, 5); // 'HH:mm'
+        return fechaCita === bloqueFecha && horaCita === bloqueHora.substring(0, 5);
       });
 
-      return { fecha, bloques: bloquesProcesados };
+      return {
+        ...b,
+        habilitada: b.estado === 'Disponible' && !pacienteTieneCitaEseDia,
+        esTuReserva: citaPaciente !== undefined &&
+          (citaPaciente.estado === 'Reservada' || citaPaciente.estado === 'Solicitada'),
+        estado: citaPaciente?.estado || b.estado
+      };
     });
-  }
+
+    return {
+      fecha,
+      bloques: bloquesProcesados
+    };
+  });
+}
 
   mostrarFormularioCita(bloque: any) {
     this.bloqueSeleccionado = bloque;

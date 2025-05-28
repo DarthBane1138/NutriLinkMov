@@ -76,22 +76,24 @@ async obtenerCitas() {
   }
 
   getEstadoClase(estado: string, esHistorial: boolean = false): string {
-  const base = esHistorial ? 'cita historial ' : 'cita ';
+    const base = esHistorial ? 'cita historial ' : 'cita ';
 
-  switch (estado) {
-    case 'Reservada':
-      return base + 'reservada';
-    case 'Cancelada':
-      return base + 'cancelada';
-    case 'Cancelada por Nutricionista':
-    case 'Cancelada por Paciente':
-      return base + 'cancelada-burdeo';
-    case 'Completada':
-      return base + 'completada';
-    default:
-      return base + 'otro';
+    switch (estado) {
+      case 'Reservada':
+        return base + 'reservada';
+      case 'Solicitada':
+        return base + 'solicitada';
+      case 'Cancelada':
+        return base + 'cancelada';
+      case 'Cancelada por Nutricionista':
+      case 'Cancelada por Paciente':
+        return base + 'cancelada-burdeo';
+      case 'Completada':
+        return base + 'completada';
+      default:
+        return base + 'otro';
+    }
   }
-}
 
 async confirmarCancelacion(cita: any) {
   const alert = await this.alertController.create({

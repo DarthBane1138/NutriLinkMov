@@ -62,10 +62,17 @@
                 <ion-label>
                   {{ bloque.hora }} -
                   <span [ngStyle]="{
-                    color: bloque.esTuReserva ? '#f1c40f' : (bloque.estado === 'Reservada' ? 'red' : 'green'),
-                    'font-weight': bloque.esTuReserva ? 'bold' : 'normal'
-                  }">
-                    {{ bloque.esTuReserva ? 'Tu reserva' : bloque.estado }}
+                color: bloque.esTuReserva && bloque.estado === 'Reservada' ? '#f1c40f' :
+                       bloque.esTuReserva && bloque.estado === 'Solicitada' ? '#3498db' :
+                       bloque.estado === 'Reservada' ? 'red' :
+                       bloque.estado === 'Solicitada' ? '#e67e22' : 'green',
+                'font-weight': bloque.esTuReserva ? 'bold' : 'normal'
+              }">
+                    {{
+                    bloque.esTuReserva && bloque.estado === 'Reservada' ? 'Tu reserva' :
+                    bloque.esTuReserva && bloque.estado === 'Solicitada' ? 'Solicitada' :
+                    bloque.estado
+                    }}
                   </span>
                 </ion-label>
                 <ion-button size="small" [disabled]="bloque.estado === 'Reservada' || !bloque.habilitada"
