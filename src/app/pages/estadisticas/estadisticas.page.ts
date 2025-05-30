@@ -62,6 +62,12 @@ export class EstadisticasPage implements OnInit, ViewDidEnter {
         }
       }
 
+      fechas.reverse();
+      pesos.reverse();
+      tallas.reverse();
+      imcs.reverse();
+      grasas.reverse();
+
       // Renderizar gráficos
       this.generarLineChartGlobal(fechas, imcs, pesos, tallas, grasas);
       this.generarBarChartGlobal(fechas, imcs, pesos, tallas, grasas);
