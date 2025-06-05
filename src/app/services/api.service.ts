@@ -119,13 +119,11 @@ export class ApiService {
     id_paciente: number,
     id_disponibilidad: number,
     motivo_consulta: string,
-    hecho_relevante: string
   ): Observable<any> {
     const body = {
       id_paciente,
       id_disponibilidad,
-      motivo_consulta,
-      hecho_relevante
+      motivo_consulta
     };
 
     return this.http.post(`${this.ruta}/api_nutrilink/agenda/paciente_solicitar_cita`, body);
@@ -169,5 +167,13 @@ export class ApiService {
 
     return this.http.get(`${this.ruta}/api_nutrilink/minuta/obtener_minuta`, { params });
   }
+
+  eliminarCuentaPaciente(correo: string, contrasena: string): Observable<any> {
+  const body = { correo, contrasena };
+    console.log('PLF Datos viajando hacia la API:');
+    console.log('PLF llamado API Correo:', correo);
+    console.log('PLF llamado API Contraseña:', contrasena);
+  return this.http.post(`${this.ruta}/api_nutrilink/paciente/eliminar_paciente`, body);
+}
 
 }

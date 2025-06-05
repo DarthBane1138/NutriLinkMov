@@ -22,7 +22,6 @@ export class NutricionistasPage implements OnInit {
   citasDelPaciente: any[] = [];
   bloqueSeleccionado: any = null;
   mdl_motivo: string = '';
-  mdl_hecho: string = '';
   datosUsuarios: any = {};
 
   constructor(private api: ApiService, private db: DblocalService) { }
@@ -151,7 +150,6 @@ agruparPorFecha() {
   mostrarFormularioCita(bloque: any) {
     this.bloqueSeleccionado = bloque;
     this.mdl_motivo = '';
-    this.mdl_hecho = '';
     this.mostrarModalFormulario = true;
   }
 
@@ -167,8 +165,7 @@ agruparPorFecha() {
     this.api.solicitarCita(
       id_paciente,
       this.bloqueSeleccionado.id_disponibilidad,
-      this.mdl_motivo,
-      this.mdl_hecho
+      this.mdl_motivo
     ).subscribe({
       next: (response) => {
         if (response.status === 'ok') {

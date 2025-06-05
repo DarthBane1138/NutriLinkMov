@@ -35,7 +35,6 @@ mostrarModalFormulario = false;
 bloqueSeleccionado: any = null;
 
 mdl_motivo: string = '';
-mdl_hecho: string = '';
 
 citasDelPaciente: any[] = [];
 
@@ -335,7 +334,6 @@ cerrarModal() {
 mostrarFormularioCita(bloque: any) {
   this.bloqueSeleccionado = bloque;
   this.mdl_motivo = '';
-  this.mdl_hecho = '';
   this.mostrarModalFormulario = true;
 }
 
@@ -355,8 +353,7 @@ confirmarAgendarCita() {
   this.api.solicitarCita(
     id_paciente,
     this.bloqueSeleccionado.id_disponibilidad,
-    this.mdl_motivo,
-    this.mdl_hecho
+    this.mdl_motivo
   ).subscribe({
     next: (response) => {
       if (response.status === 'ok') {
