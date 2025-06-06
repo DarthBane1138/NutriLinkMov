@@ -132,63 +132,62 @@
         </ion-item>
         <!-- Modal para cambiar número telefónico -->
         <ion-modal trigger="open-modal-telefono" (willDismiss)="onWillDismissTelefono($event)">
-          <ng-template>
-            <ion-header>
-              <ion-toolbar>
-                <ion-buttons slot="start">
-                  <ion-button (click)="cancel()">Cancel</ion-button>
-                </ion-buttons>
-                <ion-title>Cambiar Teléfono</ion-title>
-                <ion-buttons slot="end">
-                  <ion-button (click)="confirmTelefono()" [strong]="true">Confirm</ion-button>
-                </ion-buttons>
-              </ion-toolbar>
-            </ion-header>
-            <ion-content class="ion-padding">
-              <ion-item>
-                <ion-input label="Nuevo número telefónico" labelPlacement="stacked" type="text"
-                  placeholder="{{ datosUsuarios.telefono }}" [(ngModel)]="mdl_telefono"></ion-input>
-              </ion-item>
-            </ion-content>
+          <ng-template><ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="start">
+                <ion-button (click)="cancel()">Cancel</ion-button>
+              </ion-buttons>
+              <ion-title>Cambiar Teléfono</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="confirmTelefono()" [strong]="true">Confirm</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding">
+            <ion-item>
+              <ion-input label="Nuevo número telefónico" labelPlacement="stacked" type="text"
+                placeholder="{{ datosUsuarios.telefono }}" [(ngModel)]="mdl_telefono"></ion-input>
+            </ion-item>
+          </ion-content>
           </ng-template>
-        </ion-modal>
-        <!-- Contraseña -->
-        <ion-item>
-          <ion-button id="open-modal-contrasena" expand="block" class="edit-contrasena"><ion-icon
-              name="create-outline"></ion-icon>Modificar Contraseña</ion-button>
-        </ion-item>
-        <!-- Botón para abrir modal de eliminación de cuenta -->
-        <ion-item lines="none">
-          <ion-button expand="block" color="danger" id="open-modal-eliminar">
-            <ion-icon name="trash-outline" slot="start"></ion-icon>
-            Eliminar Cuenta
-          </ion-button>
-        </ion-item>
-        <!-- Modal para modificar contraseña -->
-        <ion-modal trigger="open-modal-contrasena" (willDismiss)="onWillDismissContrasena($event)">
-          <ng-template>
-            <ion-header>
-              <ion-toolbar>
-                <ion-buttons slot="start">
-                  <ion-button (click)="cancel()">Cancel</ion-button>
-                </ion-buttons>
-                <ion-title>Modificar Contraseña</ion-title>
-                <ion-buttons slot="end">
-                  <ion-button (click)="confirmContrasena()" [strong]="true">Confirm</ion-button>
-                </ion-buttons>
-              </ion-toolbar>
-            </ion-header>
-            <ion-content class="ion-padding">
-              <ion-item>
-                <ion-input label="Contraseña Antigua" labelPlacement="stacked" type="password"
-                  placeholder="Ingrese su contraseña actual" [(ngModel)]="mdl_contrasena_antigua"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-input label="Contraseña Nueva" labelPlacement="stacked" type="password"
-                  placeholder="Contrasena nueva" [(ngModel)]="mdl_contrasena_nueva"></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-input label="Confirme Contraseña Nueva" labelPlacement="stacked" type="password"
+          </ion-modal>
+          <!-- Contraseña -->
+          <ion-item>
+            <ion-button id="open-modal-contrasena" expand="block" class="edit-contrasena"><ion-icon
+                name="create-outline"></ion-icon>Modificar Contraseña</ion-button>
+          </ion-item>
+          <!-- Botón para abrir modal de eliminación de cuenta -->
+          <ion-item lines="none">
+            <ion-button id="open-modal-eliminar" class="boton-eliminar-transparente" size="small" shape="round">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              Eliminar Cuenta
+            </ion-button>
+          </ion-item>
+          <!-- Modal para modificar contraseña -->
+          <ion-modal trigger="open-modal-contrasena" (willDismiss)="onWillDismissContrasena($event)">
+            <ng-template>
+              <ion-header>
+                <ion-toolbar>
+                  <ion-buttons slot="start">
+                    <ion-button (click)="cancel()">Cancel</ion-button>
+                  </ion-buttons>
+                  <ion-title>Modificar Contraseña</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="confirmContrasena()" [strong]="true">Confirm</ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+              <ion-content class="ion-padding">
+                <ion-item>
+                  <ion-input label="Contraseña Antigua" labelPlacement="stacked" type="password"
+                    placeholder="Ingrese su contraseña actual" [(ngModel)]="mdl_contrasena_antigua"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Contraseña Nueva" labelPlacement="stacked" type="password" placeholder="Contrasena nueva"
+                    [(ngModel)]="mdl_contrasena_nueva"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Confirme Contraseña Nueva" labelPlacement="stacked" type="password"
                   placeholder="Confirme contraseña nueva" [(ngModel)]="mdl_contrasena_nueva_conf"></ion-input>
               </ion-item>
             </ion-content>

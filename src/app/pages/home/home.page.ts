@@ -112,9 +112,7 @@ citasDelPaciente: any[] = [];
           fecha_hora: cita.fecha_hora,
           estado: cita.estado,
           motivo_consulta: cita.motivo_consulta,
-          compromiso_acordado: cita.compromiso_acordado,
-          adherencia_medicamentos: cita.adherencia_medicamentos,
-          hecho_relevante: cita.hecho_relevante,
+          notas: cita.notas,
           paciente_id_paciente: cita.paciente_id_paciente,
           nutricionista_id_nutricionista: cita.nutricionista_id_nutricionista
         }))

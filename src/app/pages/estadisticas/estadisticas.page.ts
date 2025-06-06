@@ -17,6 +17,11 @@ Chart.register(...registerables, ChartDataLabels);
 export class EstadisticasPage implements OnInit, ViewDidEnter {
 
   id_paciente: number = 0;
+  noDatosGlobal: boolean = false;
+  noDatosIMC: boolean = false;
+  noDatosPeso: boolean = false;
+  noDatosTalla: boolean = false;
+  noDatosGrasa: boolean = false;
 
   constructor(private api: ApiService, private db: DblocalService) {}
 
@@ -25,61 +30,95 @@ export class EstadisticasPage implements OnInit, ViewDidEnter {
     this.id_paciente = sesion.id_paciente;
   }
 
-  async ionViewDidEnter() {
-    this.limpiarGraficos();
+async ionViewDidEnter() {
+  this.limpiarGraficos();
 
-    try {
-      const response: any = await lastValueFrom(this.api.obtenerAntropometria(this.id_paciente));
-      if (response.status !== 'ok') return;
+  try {
+    const response: any = await lastValueFrom(this.api.obtenerAntropometria(this.id_paciente));
 
-      const fechas: string[] = [];
-      const pesos: number[] = [];
-      const tallas: number[] = [];
-      const imcs: number[] = [];
-      const grasas: number[] = [];
+    // Mostrar toda la respuesta para diagnóstico
+    console.log('PLF: respuesta de API:', response);
 
-      for (const dato of response.datos) {
-        if (!dato.fecha) continue;
-
-        const partes = dato.fecha.slice(0, 10).split('-');
-        const fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`;
-
-        fechas.push(fechaFormateada);
-        pesos.push(dato.peso_kg || 0);
-        tallas.push(dato.talla_cm || 0);
-
-        const fechaAPI = `${partes[0]}-${partes[1]}-${partes[2]}`;
-        const calcResp: any = await lastValueFrom(
-          this.api.obtenerCalculosAntropometricos(this.id_paciente, fechaAPI)
-        );
-
-        if (calcResp.status === 'success') {
-          imcs.push(calcResp.data.imc || 0);
-          grasas.push(calcResp.data.porc_grasa || 0);
-        } else {
-          imcs.push(0);
-          grasas.push(0);
-        }
-      }
-
-      fechas.reverse();
-      pesos.reverse();
-      tallas.reverse();
-      imcs.reverse();
-      grasas.reverse();
-
-      // Renderizar gráficos
-      this.generarLineChartGlobal(fechas, imcs, pesos, tallas, grasas);
-      this.generarBarChartGlobal(fechas, imcs, pesos, tallas, grasas);
-      this.generarGraficosIndividuales('IMC', fechas, imcs);
-      this.generarGraficosIndividuales('Peso', fechas, pesos);
-      this.generarGraficosIndividuales('Talla', fechas, tallas);
-      this.generarGraficosIndividuales('Grasa', fechas, grasas);
-
-    } catch (error) {
-      console.error('Error al cargar datos para estadísticas:', error);
+    // Si el status no es OK, marcar todos los gráficos como sin datos
+    if (response.status !== 'ok') {
+      this.noDatosGlobal = true;
+      this.noDatosIMC = true;
+      this.noDatosPeso = true;
+      this.noDatosTalla = true;
+      this.noDatosGrasa = true;
+      return;
     }
+
+    const fechas: string[] = [];
+    const pesos: number[] = [];
+    const tallas: number[] = [];
+    const imcs: number[] = [];
+    const grasas: number[] = [];
+
+    for (const dato of response.datos) {
+      if (!dato.fecha) continue;
+
+      const partes = dato.fecha.slice(0, 10).split('-');
+      const fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`;
+
+      fechas.push(fechaFormateada);
+      pesos.push(dato.peso_kg || 0);
+      tallas.push(dato.talla_cm || 0);
+
+      const fechaAPI = `${partes[0]}-${partes[1]}-${partes[2]}`;
+      const calcResp: any = await lastValueFrom(
+        this.api.obtenerCalculosAntropometricos(this.id_paciente, fechaAPI)
+      );
+
+      if (calcResp.status === 'success') {
+        imcs.push(calcResp.data.imc || 0);
+        grasas.push(calcResp.data.porc_grasa || 0);
+      } else {
+        imcs.push(0);
+        grasas.push(0);
+      }
+    }
+
+    fechas.reverse();
+    pesos.reverse();
+    tallas.reverse();
+    imcs.reverse();
+    grasas.reverse();
+
+    // Mostrar los datos en consola
+    console.log('PLF: IMC:', imcs);
+    console.log('PLF: Peso:', pesos);
+    console.log('PLF: Talla:', tallas);
+    console.log('PLF: Grasa:', grasas);
+
+    // Si hay fechas, se considera que hay datos globales
+    this.noDatosGlobal = fechas.length === 0;
+
+    if (this.noDatosGlobal) {
+      this.noDatosIMC = true;
+      this.noDatosPeso = true;
+      this.noDatosTalla = true;
+      this.noDatosGrasa = true;
+      return;
+    }
+
+    // Renderizar gráficos
+    this.generarLineChartGlobal(fechas, imcs, pesos, tallas, grasas);
+    this.generarBarChartGlobal(fechas, imcs, pesos, tallas, grasas);
+    this.generarGraficosIndividuales('IMC', fechas, imcs);
+    this.generarGraficosIndividuales('Peso', fechas, pesos);
+    this.generarGraficosIndividuales('Talla', fechas, tallas);
+    this.generarGraficosIndividuales('Grasa', fechas, grasas);
+
+  } catch (error) {
+    console.error('Error al cargar datos para estadísticas:', error);
+    this.noDatosGlobal = true;
+    this.noDatosIMC = true;
+    this.noDatosPeso = true;
+    this.noDatosTalla = true;
+    this.noDatosGrasa = true;
   }
+}
 
   limpiarGraficos() {
     const ids = [

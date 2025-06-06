@@ -1,7 +1,7 @@
 <ion-header class="ion-padding-top">
   <ion-toolbar class="toolbar">
-    <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
-    <ion-title>Mis Citas</ion-title>
+    <ion-back-button slot="start" defaultHref="/home" class="titulo-head"></ion-back-button>
+    <ion-title class="titulo-head">Mis Citas</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -20,15 +20,7 @@
             <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
             <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
             <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
-            <p><strong>Hecho relevante:</strong> {{ cita.hecho_relevante }}</p>
-  
-            <p *ngIf="cita.compromiso_acordado != null && cita.compromiso_acordado !== ''">
-              <strong>Compromiso acordado:</strong> {{ cita.compromiso_acordado }}
-            </p>
-  
-            <p *ngIf="cita.adherencia_medicamentos != null && cita.adherencia_medicamentos !== ''">
-              <strong>Adherencia a medicamentos:</strong> {{ cita.adherencia_medicamentos }}
-            </p>
+            <p><strong>Notas:</strong> {{ cita.notas }}</p>
   
             <!-- Botón para cancelar -->
             <ion-button *ngIf="cita.estado === 'Reservada'" color="danger" size="small" expand="block"
@@ -59,7 +51,7 @@
             <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
             <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
             <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
-            <p><strong>Hecho relevante:</strong> {{ cita.hecho_relevante }}</p>
+            <p><strong>Notas:</strong> {{ cita.notas }}</p>
           </ion-label>
         </ion-item>
       </ion-list>

@@ -79,7 +79,7 @@ export class PerfilPage implements OnInit {
             motivo_consulta: cita.motivo_consulta,
             compromiso_acordado: cita.compromiso_acordado,
             adherencia_medicamentos: cita.adherencia_medicamentos,
-            hecho_relevante: cita.hecho_relevante,
+            notas: cita.notas,
             paciente_id_paciente: cita.paciente_id_paciente,
             nutricionista_id_nutricionista: cita.nutricionista_id_nutricionista
           }))
@@ -318,40 +318,45 @@ export class PerfilPage implements OnInit {
     await alert.present();
   }
 
-  async confirmEliminarCuenta() {
-    // Validación
-    if (!this.mdl_eliminar_correo || !this.mdl_eliminar_contrasena || !this.mdl_eliminar_contrasena_conf) {
-      return this.mostrarAlerta('Todos los campos son obligatorios.');
-    }
-
-    if (this.mdl_eliminar_contrasena !== this.mdl_eliminar_contrasena_conf) {
-      return this.mostrarAlerta('Las contraseñas no coinciden.');
-    }
-
-    // Mostrar los datos antes de enviarlos
-    console.log('PLF eliminación Intentando eliminar cuenta con los siguientes datos:');
-    console.log('PLF eliminación Correo:', this.mdl_eliminar_correo);
-    console.log('PLF eliminación Contraseña:', this.mdl_eliminar_contrasena);
-    console.log('PLF eliminación Confirmación Contraseña:', this.mdl_eliminar_contrasena_conf);
-
-    try {
-      const respuesta: any = await lastValueFrom(
-        this.api.eliminarCuentaPaciente(this.mdl_eliminar_correo, this.mdl_eliminar_contrasena)
-      );
-
-      console.log('Respuesta desde API:', respuesta);
-
-      if (respuesta.status === 'ok') {
-        await this.db.eliminarSesion();
-        window.location.href = '/login';
-      } else {
-        this.mostrarAlerta(respuesta.error || 'No se pudo eliminar la cuenta.');
-      }
-    } catch (error: any) {
-      console.error('Error al eliminar cuenta:', error);
-      const mensaje = error?.error?.error || 'Error inesperado al intentar eliminar la cuenta.';
-      this.mostrarAlerta(mensaje);
-    }
+async confirmEliminarCuenta() {
+  // Validación
+  if (!this.mdl_eliminar_correo || !this.mdl_eliminar_contrasena || !this.mdl_eliminar_contrasena_conf) {
+    return this.mostrarAlerta('Todos los campos son obligatorios.');
   }
+
+  if (this.mdl_eliminar_contrasena !== this.mdl_eliminar_contrasena_conf) {
+    return this.mostrarAlerta('Las contraseñas no coinciden.');
+  }
+
+  console.log('PLF eliminación Intentando eliminar cuenta con los siguientes datos:');
+  console.log('PLF eliminación Correo:', this.mdl_eliminar_correo);
+  console.log('PLF eliminación Contraseña:', this.mdl_eliminar_contrasena);
+  console.log('PLF eliminación Confirmación Contraseña:', this.mdl_eliminar_contrasena_conf);
+
+  try {
+    const respuesta: any = await lastValueFrom(
+      this.api.eliminarCuentaPaciente(this.mdl_eliminar_correo, this.mdl_eliminar_contrasena)
+    );
+
+    console.log('Respuesta desde API:', respuesta);
+
+    if (respuesta.status === 'ok') {
+      // Mostrar aviso antes de cerrar sesión
+      await this.mostrarAlerta('Cuenta eliminada con éxito. Cerrando sesión en 5 segundos...');
+
+      // Esperar 5 segundos
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      await this.db.eliminarSesion();
+      window.location.href = '/login';
+    } else {
+      this.mostrarAlerta(respuesta.error || 'No se pudo eliminar la cuenta.');
+    }
+  } catch (error: any) {
+    console.error('Error al eliminar cuenta:', error);
+    const mensaje = error?.error?.error || 'Error inesperado al intentar eliminar la cuenta.';
+    this.mostrarAlerta(mensaje);
+  }
+}
 
 }

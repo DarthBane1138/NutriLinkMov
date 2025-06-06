@@ -1,53 +1,75 @@
 <ion-header class="ion-padding-top">
   <ion-toolbar class="toolbar">
-    <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
-    <ion-title>estadisticas</ion-title>
+    <ion-back-button slot="start" defaultHref="/home" class="titulo-head"></ion-back-button>
+    <ion-title class="titulo-head">estadisticas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-    <h2>Gráfico de evolución</h2>
-  <div class="chart-container">
+  <h2>Gráfico de evolución</h2>
+  <p *ngIf="noDatosGlobal">No se han encontrado datos de evolución para este paciente.</p>
+  <div class="chart-container" *ngIf="!noDatosGlobal">
     <canvas id="lineChart"></canvas>
   </div>
 
   <h2>Gráfico Resumen</h2>
-  <div class="chart-container">
+  <p *ngIf="noDatosGlobal">No se han encontrado datos de resumen para este paciente.</p>
+  <div class="chart-container" *ngIf="!noDatosGlobal">
     <canvas id="barChart"></canvas>
   </div>
 
-  <h2>IMC</h2>
+<h2>IMC</h2>
+<ng-container *ngIf="noDatosIMC; else mostrarGraficosIMC">
+  <p>No se han encontrado datos de IMC para este paciente.</p>
+</ng-container>
+<ng-template #mostrarGraficosIMC>
   <div class="chart-container">
     <canvas id="lineChartIMC"></canvas>
   </div>
   <div class="chart-container">
     <canvas id="barChartIMC"></canvas>
   </div>
+</ng-template>
 
-  <h2>Peso (kg)</h2>
+<h2>Peso (kg)</h2>
+<ng-container *ngIf="noDatosPeso; else mostrarGraficosPeso">
+  <p>No se han encontrado datos de peso para este paciente.</p>
+</ng-container>
+<ng-template #mostrarGraficosPeso>
   <div class="chart-container">
     <canvas id="lineChartPeso"></canvas>
   </div>
   <div class="chart-container">
     <canvas id="barChartPeso"></canvas>
   </div>
+</ng-template>
 
-  <h2>Talla (cm)</h2>
+<h2>Talla (cm)</h2>
+<ng-container *ngIf="noDatosTalla; else mostrarGraficosTalla">
+  <p>No se han encontrado datos de talla para este paciente.</p>
+</ng-container>
+<ng-template #mostrarGraficosTalla>
   <div class="chart-container">
     <canvas id="lineChartTalla"></canvas>
   </div>
   <div class="chart-container">
     <canvas id="barChartTalla"></canvas>
   </div>
+</ng-template>
 
-  <h2>% Grasa</h2>
+<h2>% Grasa</h2>
+<ng-container *ngIf="noDatosGrasa; else mostrarGraficosGrasa">
+  <p>No se han encontrado datos de % grasa para este paciente.</p>
+</ng-container>
+<ng-template #mostrarGraficosGrasa>
   <div class="chart-container">
     <canvas id="lineChartGrasa"></canvas>
   </div>
   <div class="chart-container">
     <canvas id="barChartGrasa"></canvas>
   </div>
+</ng-template>
 
 </ion-content>
 

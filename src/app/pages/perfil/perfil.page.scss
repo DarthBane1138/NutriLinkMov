@@ -21,3 +21,13 @@
     width: 100%;
     max-width: 100%;
 }
+
+.boton-eliminar-transparente {
+  --background: rgba(220, 53, 70, 0.678); /* Rojo con transparencia */
+  --color: white;
+  --border-radius: 10px;
+  font-size: 0.8rem;
+  height: 30px;
+  display: block;
+  margin: 0 auto;
+}

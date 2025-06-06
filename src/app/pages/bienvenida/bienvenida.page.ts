@@ -16,11 +16,14 @@ export class BienvenidaPage implements OnInit {
     setTimeout (() => {
       this.db.validarSesion().then(data => {
         if(data == 0) {
+          console.log("PLF: Entrando al login")
           this.router.navigate(['login'], { replaceUrl: true });
         } else {
+          console.log("PLF: Entrando al login")
           this.router.navigate(['home'], { replaceUrl: true });
         }
       })
+      console.log("PLF: No entrando a ninguno")
     }, 3000);
   }
 }

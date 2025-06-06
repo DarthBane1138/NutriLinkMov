@@ -1,7 +1,7 @@
 <ion-header class="ion-padding-top">
   <ion-toolbar class="toolbar">
-    <ion-back-button slot="start" defaultHref="/home"></ion-back-button>
-    <ion-title>Lista Nutricionistas</ion-title>
+    <ion-back-button slot="start" defaultHref="/home" class="titulo-head"></ion-back-button>
+    <ion-title class="titulo-head">Lista Nutricionistas</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -36,9 +36,9 @@
     <!-- Header con nombre -->
     <ion-header class="ion-padding-top">
       <ion-toolbar class="toolbar">
-        <ion-title>Agendar con {{ nutricionistaSeleccionado?.primer_nombre }} {{ nutricionistaSeleccionado?.apellido_p
+        <ion-title class="titulo-head">Agendar con {{ nutricionistaSeleccionado?.primer_nombre }} {{ nutricionistaSeleccionado?.apellido_p
           }}</ion-title>
-        <ion-buttons slot="end">
+        <ion-buttons slot="end" class="titulo-head">
           <ion-button (click)="cerrarModal()">
             <ion-icon name="close"></ion-icon>
           </ion-button>
