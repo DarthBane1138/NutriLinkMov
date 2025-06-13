@@ -17,7 +17,7 @@
   <div class="panel-dos">
     <p>Seleccione una actividad
     <p>
-    <!-- Menú selección actividad -->
+      <!-- Menú selección actividad -->
     <div class="cuadrados">
       <div class="cuadro azul" (click)="irDatosAntropometricos()">Ver datos antropométricos</div>
       <div class="cuadro verde" (click)="irPlanNutricional()">Plan nutricional</div>
@@ -70,7 +70,8 @@
     <!-- Header con nombre -->
     <ion-header class="ion-padding-top">
       <ion-toolbar class="toolbar">
-        <ion-title class="titulo-head">Agendar con {{ nutricionistaSeleccionado?.primer_nombre }} {{ nutricionistaSeleccionado?.apellido_p
+        <ion-title class="titulo-head">Agendar con {{ nutricionistaSeleccionado?.primer_nombre }} {{
+          nutricionistaSeleccionado?.apellido_p
           }}</ion-title>
         <ion-buttons slot="end" class="titulo-head">
           <ion-button (click)="cerrarModal()">
@@ -86,7 +87,19 @@
           <ion-card-title>Disponibilidad</ion-card-title>
           <p class="nota_disponibilidad">Solo puedes reservar una hora por día</p>
         </ion-card-header>
+
         <ion-card-content>
+          <!-- Selector de centro de atención -->
+          <ion-item>
+            <ion-label position="stacked">Centro de atención</ion-label>
+            <ion-select [(ngModel)]="centroSeleccionadoId" placeholder="Seleccione un centro"
+              (ionChange)="agruparPorFecha()">
+              <ion-select-option *ngFor="let centro of centrosDisponibles" [value]="centro.id">
+                {{ centro.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
           <ion-list>
             <!-- Día disponible -->
             <div *ngFor="let fecha of fechasAgrupadas">
@@ -97,12 +110,12 @@
                 <ion-label>
                   {{ bloque.hora }} -
                   <span [ngStyle]="{
-                color: bloque.esTuReserva && bloque.estado === 'Reservada' ? '#f1c40f' :
-                       bloque.esTuReserva && bloque.estado === 'Solicitada' ? '#3498db' :
-                       bloque.estado === 'Reservada' ? 'red' :
-                       bloque.estado === 'Solicitada' ? '#e67e22' : 'green',
-                'font-weight': bloque.esTuReserva ? 'bold' : 'normal'
-              }">
+              color: bloque.esTuReserva && bloque.estado === 'Reservada' ? '#f1c40f' :
+                     bloque.esTuReserva && bloque.estado === 'Solicitada' ? '#3498db' :
+                     bloque.estado === 'Reservada' ? 'red' :
+                     bloque.estado === 'Solicitada' ? '#e67e22' : 'green',
+              'font-weight': bloque.esTuReserva ? 'bold' : 'normal'
+            }">
                     {{
                     bloque.esTuReserva && bloque.estado === 'Reservada' ? 'Tu reserva' :
                     bloque.esTuReserva && bloque.estado === 'Solicitada' ? 'Solicitada' :
@@ -111,10 +124,10 @@
                   </span>
                 </ion-label>
                 <ion-button size="small"
-                    [disabled]="bloque.estado === 'Reservada' || bloque.estado === 'Solicitada' || !bloque.habilitada"
-                    (click)="mostrarFormularioCita(bloque)">
-                    Reservar
-                  </ion-button>
+                  [disabled]="bloque.estado === 'Reservada' || bloque.estado === 'Solicitada' || !bloque.habilitada"
+                  (click)="mostrarFormularioCita(bloque)">
+                  Reservar
+                </ion-button>
               </ion-item>
             </div>
           </ion-list>

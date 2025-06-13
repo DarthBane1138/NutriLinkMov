@@ -38,6 +38,9 @@ mdl_motivo: string = '';
 
 citasDelPaciente: any[] = [];
 
+centrosDisponibles: any[] = [];
+centroSeleccionadoId: number | null = null;
+
   confirmButtons = [
     {
       text:'No',
@@ -151,8 +154,6 @@ citasDelPaciente: any[] = [];
           correo: nutri.correo,
           especialidades: []
         };
-        // console.log('PLF - Nombre:', nutri.primer_nombre);
-        // console.log('PLF - ID:', id_nutricionista);
         
         // Obtener especialidades con manejo de respuestas según la API
         const especialidades = await this.obtenerEspecialidadesNutricionista(id_nutricionista);
@@ -237,6 +238,7 @@ abrirModal(nutricionista: any) {
               return fechaDisp >= hoy;
             });
 
+            this.obtenerCentrosDeDisponibilidad();
             this.agruparPorFecha();
           }
 
@@ -282,7 +284,10 @@ abrirModal(nutricionista: any) {
 agruparPorFecha() {
   const agrupado: { [fecha: string]: any[] } = {};
 
-  for (const disp of this.disponibilidades) {
+  // ✅ Filtrar primero por centro seleccionado
+  const disponiblesFiltrados = this.disponibilidades.filter(d => d.id_centro === this.centroSeleccionadoId);
+
+  for (const disp of disponiblesFiltrados) {
     const fechaISO = new Date(disp.fecha).toISOString().split('T')[0];
     if (!agrupado[fechaISO]) agrupado[fechaISO] = [];
     agrupado[fechaISO].push(disp);
@@ -343,14 +348,22 @@ cancelarFormulario() {
 confirmarAgendarCita() {
   const id_paciente = this.datosUsuarios?.id_paciente;
 
-  if (!id_paciente || !this.bloqueSeleccionado) {
+  if (!id_paciente || !this.bloqueSeleccionado || !this.bloqueSeleccionado.id_centro) {
     console.error('Datos incompletos');
     return;
   }
 
+  console.log('📤 PLF Enviando solicitud de cita con:\n' + JSON.stringify({
+  id_paciente,
+  id_disponibilidad: this.bloqueSeleccionado.id_disponibilidad,
+  motivo_consulta: this.mdl_motivo,
+  id_centro: this.bloqueSeleccionado.id_centro
+}, null, 2));
+
   this.api.solicitarCita(
     id_paciente,
     this.bloqueSeleccionado.id_disponibilidad,
+    this.bloqueSeleccionado.id_centro,
     this.mdl_motivo
   ).subscribe({
     next: (response) => {
@@ -436,4 +449,25 @@ async verificarCancelacionesPendientes() {
     console.error('Error al verificar cancelaciones pendientes:', error);
   }
 }
+
+private obtenerCentrosDeDisponibilidad(): void {
+  const centrosMap = new Map<number, string>();
+  for (const disp of this.disponibilidades) {
+    if (disp.id_centro && disp.nombre_centro) {
+      centrosMap.set(disp.id_centro, disp.nombre_centro);
+    }
+  }
+
+  this.centrosDisponibles = Array.from(centrosMap.entries()).map(([id, nombre]) => ({
+    id,
+    nombre
+  }));
+
+  // Si solo hay un centro, seleccionarlo automáticamente
+  if (this.centrosDisponibles.length === 1) {
+    this.centroSeleccionadoId = this.centrosDisponibles[0].id;
+  }
 }
+
+}
+

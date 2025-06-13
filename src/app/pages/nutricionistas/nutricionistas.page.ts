@@ -23,6 +23,8 @@ export class NutricionistasPage implements OnInit {
   bloqueSeleccionado: any = null;
   mdl_motivo: string = '';
   datosUsuarios: any = {};
+  centrosDisponibles: any[] = [];
+  centroSeleccionadoId: number | null = null;
 
   constructor(private api: ApiService, private db: DblocalService) { }
 
@@ -86,6 +88,7 @@ export class NutricionistasPage implements OnInit {
                 fechaDisp.setHours(0, 0, 0, 0);
                 return fechaDisp >= hoy;
               });
+              this.obtenerCentrosDeDisponibilidad();
               this.agruparPorFecha();
             }
             this.mostrarModal = true;
@@ -107,7 +110,12 @@ export class NutricionistasPage implements OnInit {
 agruparPorFecha() {
   const agrupado: { [fecha: string]: any[] } = {};
 
-  for (const disp of this.disponibilidades) {
+  // ✅ Filtrar por centro seleccionado
+  const disponiblesFiltrados = this.disponibilidades.filter(
+    (d) => d.id_centro === this.centroSeleccionadoId
+  );
+
+  for (const disp of disponiblesFiltrados) {
     const fechaISO = new Date(disp.fecha).toISOString().split('T')[0];
     if (!agrupado[fechaISO]) agrupado[fechaISO] = [];
     agrupado[fechaISO].push(disp);
@@ -121,20 +129,21 @@ agruparPorFecha() {
       return fechaCita === fecha && (cita.estado === 'Reservada' || cita.estado === 'Solicitada');
     });
 
-    const bloquesProcesados = bloquesCasteados.map(b => {
+    const bloquesProcesados = bloquesCasteados.map((b) => {
       const bloqueFecha = b.fecha.split('T')[0];
       const bloqueHora = b.hora;
 
       const citaPaciente = this.citasDelPaciente.find((cita: any) => {
         const fechaCita = cita.fecha_hora?.split('T')[0];
-        const horaCita = cita.fecha_hora?.split('T')[1]?.substring(0, 5); // 'HH:mm'
+        const horaCita = cita.fecha_hora?.split('T')[1]?.substring(0, 5);
         return fechaCita === bloqueFecha && horaCita === bloqueHora.substring(0, 5);
       });
 
       return {
         ...b,
         habilitada: b.estado === 'Disponible' && !pacienteTieneCitaEseDia,
-        esTuReserva: citaPaciente !== undefined &&
+        esTuReserva:
+          citaPaciente !== undefined &&
           (citaPaciente.estado === 'Reservada' || citaPaciente.estado === 'Solicitada'),
         estado: citaPaciente?.estado || b.estado
       };
@@ -158,27 +167,52 @@ agruparPorFecha() {
     this.bloqueSeleccionado = null;
   }
 
-  confirmarAgendarCita() {
-    const id_paciente = this.datosUsuarios?.id_paciente;
-    if (!id_paciente || !this.bloqueSeleccionado) return;
+confirmarAgendarCita() {
+  const id_paciente = this.datosUsuarios?.id_paciente;
+  const id_disponibilidad = this.bloqueSeleccionado?.id_disponibilidad;
+  const id_centro = this.bloqueSeleccionado?.id_centro;
 
-    this.api.solicitarCita(
-      id_paciente,
-      this.bloqueSeleccionado.id_disponibilidad,
-      this.mdl_motivo
-    ).subscribe({
-      next: (response) => {
-        if (response.status === 'ok') {
-          this.disponibilidades = this.disponibilidades.filter(
-            (d: any) => d.id_disponibilidad !== this.bloqueSeleccionado.id_disponibilidad
-          );
-          this.agruparPorFecha();
-          this.cerrarModal();
-        }
-        this.cancelarFormulario();
-      },
-      error: () => this.cancelarFormulario()
-    });
+  if (!id_paciente || !id_disponibilidad || !id_centro) {
+    console.error('Datos incompletos para agendar cita');
+    return;
   }
+
+  this.api.solicitarCita(
+    id_paciente,
+    id_disponibilidad,
+    id_centro,
+    this.mdl_motivo
+  ).subscribe({
+    next: (response) => {
+      if (response.status === 'ok') {
+        this.disponibilidades = this.disponibilidades.filter(
+          (d: any) => d.id_disponibilidad !== id_disponibilidad
+        );
+        this.agruparPorFecha();
+        this.cerrarModal();
+      }
+      this.cancelarFormulario();
+    },
+    error: () => this.cancelarFormulario()
+  });
+}
+
+private obtenerCentrosDeDisponibilidad(): void {
+  const centrosMap = new Map<number, string>();
+  for (const disp of this.disponibilidades) {
+    if (disp.id_centro && disp.nombre_centro) {
+      centrosMap.set(disp.id_centro, disp.nombre_centro);
+    }
+  }
+
+  this.centrosDisponibles = Array.from(centrosMap.entries()).map(([id, nombre]) => ({
+    id,
+    nombre
+  }));
+
+  if (this.centrosDisponibles.length === 1) {
+    this.centroSeleccionadoId = this.centrosDisponibles[0].id;
+  }
+}
 
 }

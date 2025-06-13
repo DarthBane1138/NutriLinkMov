@@ -6,57 +6,59 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <!-- Próximas Citas -->
-  <ion-card *ngIf="citasProximas.length > 0; else sinProximas">
-    <ion-card-header>
-      <ion-card-title>Próximas Citas</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let cita of citasProximas" [ngClass]="getEstadoClase(cita.estado)">
-          <ion-label>
-            <h2>{{ obtenerFecha(cita.fecha_hora) }}</h2>
-            <p><strong>Estado:</strong> {{ cita.estado }}</p>
-            <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
-            <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
-            <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
-            <p><strong>Notas:</strong> {{ cita.notas }}</p>
-  
-            <!-- Botón para cancelar -->
-            <ion-button *ngIf="cita.estado === 'Reservada'" color="danger" size="small" expand="block"
-              (click)="confirmarCancelacion(cita)">
-              Cancelar cita
-            </ion-button>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+<!-- Próximas Citas -->
+<ion-card *ngIf="citasProximas.length > 0; else sinProximas">
+  <ion-card-header>
+    <ion-card-title>Próximas Citas</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let cita of citasProximas" [ngClass]="getEstadoClase(cita.estado)">
+        <ion-label>
+          <h2>{{ obtenerFecha(cita.fecha_hora) }}</h2>
+          <p><strong>Estado:</strong> {{ cita.estado }}</p>
+          <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
+          <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
+          <p><strong>Centro de atención:</strong> {{ cita.nombre_centro }}</p>
+          <p *ngIf="cita.motivo_consulta"><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
+          <p *ngIf="cita.notas"><strong>Notas:</strong> {{ cita.notas }}</p>
+
+          <!-- Botón para cancelar -->
+          <ion-button *ngIf="cita.estado === 'Reservada'" color="danger" size="small" expand="block"
+            (click)="confirmarCancelacion(cita)">
+            Cancelar cita
+          </ion-button>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
 
   <ng-template #sinProximas>
     <ion-text color="medium">No tienes próximas citas registradas.</ion-text>
   </ng-template>
 
   <!-- Historial de Citas -->
-  <ion-card *ngIf="citasPasadas.length > 0; else sinPasadas">
-    <ion-card-header>
-      <ion-card-title>Historial de Citas</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let cita of citasPasadas" [ngClass]="getEstadoClase(cita.estado, true)">
-          <ion-label>
-            <h2>{{ obtenerFecha(cita.fecha_hora) }}</h2>
-            <p><strong>Estado:</strong> {{ cita.estado }}</p>
-            <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
-            <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
-            <p><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
-            <p><strong>Notas:</strong> {{ cita.notas }}</p>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+<ion-card *ngIf="citasPasadas.length > 0; else sinPasadas">
+  <ion-card-header>
+    <ion-card-title>Historial de Citas</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-item *ngFor="let cita of citasPasadas" [ngClass]="getEstadoClase(cita.estado, true)">
+        <ion-label>
+          <h2>{{ obtenerFecha(cita.fecha_hora) }}</h2>
+          <p><strong>Estado:</strong> {{ cita.estado }}</p>
+          <p><strong>Hora:</strong> {{ obtenerHora(cita.fecha_hora) }}</p>
+          <p><strong>Nutricionista:</strong> {{ cita.nutricionista_nombre }}</p>
+          <p><strong>Centro de atención:</strong> {{ cita.nombre_centro }}</p>
+          <p *ngIf="cita.motivo_consulta"><strong>Motivo:</strong> {{ cita.motivo_consulta }}</p>
+          <p *ngIf="cita.notas"><strong>Notas:</strong> {{ cita.notas }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
 
   <ng-template #sinPasadas>
     <ion-text color="medium">No tienes citas anteriores registradas.</ion-text>
