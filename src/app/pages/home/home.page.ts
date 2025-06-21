@@ -345,7 +345,7 @@ cancelarFormulario() {
   this.bloqueSeleccionado = null;
 }
 
-confirmarAgendarCita() {
+async confirmarAgendarCita() {
   const id_paciente = this.datosUsuarios?.id_paciente;
 
   if (!id_paciente || !this.bloqueSeleccionado || !this.bloqueSeleccionado.id_centro) {
@@ -354,11 +354,11 @@ confirmarAgendarCita() {
   }
 
   console.log('📤 PLF Enviando solicitud de cita con:\n' + JSON.stringify({
-  id_paciente,
-  id_disponibilidad: this.bloqueSeleccionado.id_disponibilidad,
-  motivo_consulta: this.mdl_motivo,
-  id_centro: this.bloqueSeleccionado.id_centro
-}, null, 2));
+    id_paciente,
+    id_disponibilidad: this.bloqueSeleccionado.id_disponibilidad,
+    motivo_consulta: this.mdl_motivo,
+    id_centro: this.bloqueSeleccionado.id_centro
+  }, null, 2));
 
   this.api.solicitarCita(
     id_paciente,
@@ -366,12 +366,51 @@ confirmarAgendarCita() {
     this.bloqueSeleccionado.id_centro,
     this.mdl_motivo
   ).subscribe({
-    next: (response) => {
+    next: async (response) => {
       if (response.status === 'ok') {
         this.disponibilidades = this.disponibilidades.filter(
           (d: any) => d.id_disponibilidad !== this.bloqueSeleccionado.id_disponibilidad
         );
         this.agruparPorFecha();
+
+        // 🗓️ Preparar mensaje plano para la alerta
+        const fechaISO = this.bloqueSeleccionado.fecha?.split('T')[0] ?? '';
+        const partes = fechaISO.split('-'); // [YYYY, MM, DD]
+
+        const fechaFormateada = new Date(
+          Number(partes[0]),
+          Number(partes[1]) - 1,
+          Number(partes[2])
+        ).toLocaleDateString('es-CL', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const hora = this.bloqueSeleccionado.hora ?? '--:--';
+        const centroNombre = this.centrosDisponibles.find(
+          c => c.id === this.bloqueSeleccionado.id_centro
+        )?.nombre ?? 'Centro no identificado';
+
+        const mensaje =
+          `📅 Fecha: ${fechaFormateada}\n` +
+          `⏰ Hora: ${hora}\n` +
+          `🏥 Centro: ${centroNombre}`;
+
+        try {
+          const alerta = await this.alertController.create({
+            header: 'Cita solicitada',
+            message: mensaje,
+            buttons: ['OK']
+          });
+
+          await alerta.present();
+          await alerta.onDidDismiss(); // ✅ Esperar antes de cerrar el modal
+        } catch (error) {
+          console.error('❌ Error al mostrar la alerta:', error);
+        }
+
         this.cerrarModal();
       } else {
         console.error(response.mensaje);

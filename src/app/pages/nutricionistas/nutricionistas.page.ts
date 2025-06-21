@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { DblocalService } from 'src/app/services/dblocal.service';
+import { AlertController} from '@ionic/angular';
 
 @Component({
   selector: 'app-nutricionistas',
@@ -26,7 +27,7 @@ export class NutricionistasPage implements OnInit {
   centrosDisponibles: any[] = [];
   centroSeleccionadoId: number | null = null;
 
-  constructor(private api: ApiService, private db: DblocalService) { }
+  constructor(private api: ApiService, private db: DblocalService, private alertController: AlertController) { }
 
   async ngOnInit() {
     const sesion = await this.db.obtenerSesion();
@@ -167,33 +168,83 @@ agruparPorFecha() {
     this.bloqueSeleccionado = null;
   }
 
-confirmarAgendarCita() {
+async confirmarAgendarCita() {
   const id_paciente = this.datosUsuarios?.id_paciente;
-  const id_disponibilidad = this.bloqueSeleccionado?.id_disponibilidad;
-  const id_centro = this.bloqueSeleccionado?.id_centro;
 
-  if (!id_paciente || !id_disponibilidad || !id_centro) {
-    console.error('Datos incompletos para agendar cita');
+  if (!id_paciente || !this.bloqueSeleccionado || !this.bloqueSeleccionado.id_centro) {
+    console.error('Datos incompletos');
     return;
   }
 
+  console.log('📤 PLF Enviando solicitud de cita con:\n' + JSON.stringify({
+    id_paciente,
+    id_disponibilidad: this.bloqueSeleccionado.id_disponibilidad,
+    motivo_consulta: this.mdl_motivo,
+    id_centro: this.bloqueSeleccionado.id_centro
+  }, null, 2));
+
   this.api.solicitarCita(
     id_paciente,
-    id_disponibilidad,
-    id_centro,
+    this.bloqueSeleccionado.id_disponibilidad,
+    this.bloqueSeleccionado.id_centro,
     this.mdl_motivo
   ).subscribe({
-    next: (response) => {
+    next: async (response) => {
       if (response.status === 'ok') {
         this.disponibilidades = this.disponibilidades.filter(
-          (d: any) => d.id_disponibilidad !== id_disponibilidad
+          (d: any) => d.id_disponibilidad !== this.bloqueSeleccionado.id_disponibilidad
         );
         this.agruparPorFecha();
+
+        // 🗓️ Preparar mensaje plano para la alerta
+        const fechaISO = this.bloqueSeleccionado.fecha?.split('T')[0] ?? '';
+        const partes = fechaISO.split('-'); // [YYYY, MM, DD]
+
+        const fechaFormateada = new Date(
+          Number(partes[0]),
+          Number(partes[1]) - 1,
+          Number(partes[2])
+        ).toLocaleDateString('es-CL', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const hora = this.bloqueSeleccionado.hora ?? '--:--';
+        const centroNombre = this.centrosDisponibles.find(
+          c => c.id === this.bloqueSeleccionado.id_centro
+        )?.nombre ?? 'Centro no identificado';
+
+        const mensaje =
+          `📅 Fecha: ${fechaFormateada}\n` +
+          `⏰ Hora: ${hora}\n` +
+          `🏥 Centro: ${centroNombre}`;
+
+        try {
+          const alerta = await this.alertController.create({
+            header: 'Cita solicitada',
+            message: mensaje,
+            buttons: ['OK']
+          });
+
+          await alerta.present();
+          await alerta.onDidDismiss(); // ✅ Esperar antes de cerrar el modal
+        } catch (error) {
+          console.error('❌ Error al mostrar la alerta:', error);
+        }
+
         this.cerrarModal();
+      } else {
+        console.error(response.mensaje);
       }
+
       this.cancelarFormulario();
     },
-    error: () => this.cancelarFormulario()
+    error: (err) => {
+      console.error(err);
+      this.cancelarFormulario();
+    }
   });
 }
 
